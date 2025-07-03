@@ -1,0 +1,14 @@
+{
+  "Id": {{ csv.Id }},
+  "FirstName": "{{ csv.Name | string.split ' ' | array.first }}",
+  "MiddleName": "{{ (csv.Name | string.split ' ')[1] }}",
+  "LastName": "{{ csv.Name | string.split ' ' | array.last }}",
+  "Email": "{{ csv.Email | string.downcase }}",
+  "Joined": "{{ csv.JoinDate }}",
+  "Age": {{ csv.Age }},
+  "Score": {{ csv.Score }},
+  "Region": "{{ csv.Country | string.upper }}",
+  "Active": {{ csv.IsActive }},
+  "LastSeen": "{{ csv.LastLogin }}",
+  "IsSenior": {{ if csv.Age >= 50 }} true {{ else }} false {{ end }}
+}
