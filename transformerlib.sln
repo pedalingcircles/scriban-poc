@@ -21,7 +21,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileProcessing.Handlers.Fit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileProcessing.Templating", "src\FileProcessing.Templating\FileProcessing.Templating.csproj", "{386054E9-1BA2-4372-86A8-8E5B75E19CA6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileProcessing.Runner", "src\FileProcessing.SampleApp\FileProcessing.Runner.csproj", "{8F972F50-33C2-45A7-A0E7-A4E07256CC72}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileProcessing.Runner", "src\FileProcessing.Runner\FileProcessing.Runner.csproj", "{8F972F50-33C2-45A7-A0E7-A4E07256CC72}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{0AB3BF05-4346-4AA6-1389-037BE0695223}"
 EndProject
