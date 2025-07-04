@@ -4,6 +4,11 @@
     <ProjectReference Include="..\FileProcessing.Core\FileProcessing.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Fluid.Core" Version="2.24.0" />
+    <PackageReference Include="Scriban" Version="6.2.1" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
