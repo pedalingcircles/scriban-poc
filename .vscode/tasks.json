@@ -14,6 +14,58 @@
 				"$msCompile"
 			],
 			"isBackground": false
+		},
+		{
+			"label": "run-file-processor-runner",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"--project",
+				"src/FileProcessing.Runner/FileProcessing.Runner.csproj"
+			],
+			"group": "build",
+			"dependsOn": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": []
+		},
+		{
+			"label": "run-file-processor-runner-with-args",
+			"type": "shell",
+			"command": "dotnet",
+			"args": [
+				"run",
+				"--project",
+				"src/FileProcessing.Runner/FileProcessing.Runner.csproj",
+				"--",
+				"${input:programArgs}"
+			],
+			"group": "build",
+			"dependsOn": "build",
+			"presentation": {
+				"echo": true,
+				"reveal": "always",
+				"focus": false,
+				"panel": "shared",
+				"showReuseMessage": true,
+				"clear": false
+			},
+			"problemMatcher": []
+		}
+	],
+	"inputs": [
+		{
+			"id": "programArgs",
+			"description": "Program arguments",
+			"default": "input.csv output.json",
+			"type": "promptString"
 		}
 	]
 }

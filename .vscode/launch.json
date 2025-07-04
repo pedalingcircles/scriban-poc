@@ -1,0 +1,69 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug FileProcessor.Runner",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/FileProcessing.Runner/bin/Debug/net9.0/FileProcessing.Runner.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/src/FileProcessing.Runner",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug FileProcessor.Runner (with args)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/FileProcessing.Runner/bin/Debug/net9.0/FileProcessing.Runner.dll",
+            "args": [
+                "FileToProcess/default.csv",
+                "Templates/Summary.liquid"
+            ],
+            "cwd": "${workspaceFolder}/src/FileProcessing.Runner",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug FileProcessor.Runner (Custom File)",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/src/FileProcessing.Runner/bin/Debug/net9.0/FileProcessing.Runner.dll",
+            "args": [
+                "${input:inputFile}",
+                "${input:templateFile}"
+            ],
+            "cwd": "${workspaceFolder}/src/FileProcessing.Runner",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Debug CsvTransformRunner",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/CsvTransformRunner/bin/Debug/net9.0/CsvTransformRunner.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/CsvTransformRunner",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        }
+    ],
+    "inputs": [
+        {
+            "id": "inputFile",
+            "description": "Enter the input file path",
+            "default": "FileToProcess/default.csv",
+            "type": "promptString"
+        },
+        {
+            "id": "templateFile", 
+            "description": "Enter the template file path",
+            "default": "Templates/Summary.liquid",
+            "type": "promptString"
+        }
+    ]
+}

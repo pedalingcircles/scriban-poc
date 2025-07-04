@@ -5,9 +5,6 @@ using FileProcessing.Handlers.Gpx;
 using FileProcessing.Handlers.Fit;
 using FileProcessing.Templating;
 
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
-
 // 1. Build detector & register handlers
 var detector = new FileFormatDetector();
 detector.RegisterHandler(new CsvFileHandler());
@@ -20,8 +17,8 @@ ITemplateEngine engine = new ScribanAdapter(); // or LiquidAdapter
 // 3. Process a file with a chosen template
 var processor = new FileProcessor(detector, engine);
 string result = processor.Process(
-    new FileInfo("data.csv"),
-    File.ReadAllText("Templates/Summary.liquid")
+    new FileInfo("FileToProcess/default.csv"),
+    File.ReadAllText("Templates/default.scriban")
 );
 
 Console.WriteLine(result);
