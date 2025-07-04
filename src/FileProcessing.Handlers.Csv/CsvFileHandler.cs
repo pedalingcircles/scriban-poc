@@ -15,10 +15,7 @@ public class CsvFileHandler : IFileFormatHandler
     {
         var parsed = new ParsedData();
         using var reader = new StreamReader(file.FullName);
-        var config = new CsvHelper.Configuration.CsvConfiguration
-        {
-            CultureInfo = CultureInfo.InvariantCulture
-        };
+        var config = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture);
         using var csv    = new CsvHelper.CsvReader(reader, config);
 
         var records = csv.GetRecords<dynamic>()
