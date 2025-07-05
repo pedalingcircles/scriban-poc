@@ -47,7 +47,7 @@ namespace FileProcessing.Templating.Tests
             var template = "Value: {{ value }}";
             var context = new Dictionary<string, object>
             {
-                { "value", null }
+                { "value", string.Empty }
             };
 
             // Act
