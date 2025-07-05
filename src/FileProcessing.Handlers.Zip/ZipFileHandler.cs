@@ -30,7 +30,7 @@ public class ZipFileHandler : IFileFormatHandler
         private static bool HasZipExtension(FileInfo file)
         {
             var extension = file.Extension?.ToLowerInvariant();
-            return extension == ".zip" || extension == ".jar" || extension == ".war";
+            return _extensions.Contains(extension);
         }
 
         private static bool IsValidZipFile(FileInfo file)
