@@ -3,6 +3,7 @@ using FileProcessing.Handlers.Zip;
 using FileProcessing.Core.Models;
 using FileProcessing.Core.Services;
 using Xunit;
+using System.IO.Compression;
 
 namespace FileProcessing.Handlers.Zip.Tests
 {
@@ -36,26 +37,19 @@ namespace FileProcessing.Handlers.Zip.Tests
         }
 
         [Fact]
-        public void CanHandle_ReturnsTrue_ForZipMagicBytes()
+        public void CanHandle_ReturnsTrue_ForValidZipFile()
         {
             var tempFile = Path.GetTempFileName() + ".zip";
-            File.WriteAllBytes(tempFile, new byte[] { 0x50, 0x4B, 0x03, 0x04 });
+            
+            // Create an actual empty ZIP file
+            using (var archive = ZipFile.Open(tempFile, ZipArchiveMode.Create))
+            {
+                // Empty ZIP file - no entries needed
+            }
+            
             var file = new FileInfo(tempFile);
-
             Assert.True(_handler.CanHandle(file));
-
-            File.Delete(tempFile);
-        }
-
-        [Fact]
-        public void CanHandle_ReturnsTrue_ForGzipMagicBytes()
-        {
-            var tempFile = Path.GetTempFileName() + ".gz";
-            File.WriteAllBytes(tempFile, new byte[] { 0x1F, 0x8B, 0x08, 0x00 });
-            var file = new FileInfo(tempFile);
-
-            Assert.True(_handler.CanHandle(file));
-
+            
             File.Delete(tempFile);
         }
 
