@@ -22,6 +22,7 @@
     <ProjectReference Include="..\..\src\FileProcessing.Handlers.Csv\FileProcessing.Handlers.Csv.csproj" />
     <ProjectReference Include="..\..\src\FileProcessing.Handlers.Gpx\FileProcessing.Handlers.Gpx.csproj" />
     <ProjectReference Include="..\..\src\FileProcessing.Handlers.Fit\FileProcessing.Handlers.Fit.csproj" />
+    <ProjectReference Include="..\..\src\FileProcessing.Handlers.Zip\FileProcessing.Handlers.Zip.csproj" />
   </ItemGroup>
 
 </Project>
