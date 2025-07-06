@@ -48,6 +48,8 @@ namespace FileProcessing.Integration.Tests
             var template = await File.ReadAllTextAsync(templatePath);
             var actualOutput = processor.Process(inputFile, template);
 
+            Console.WriteLine(actualOutput);
+
             // Assert
             var expectedOutput = await File.ReadAllTextAsync(expectedOutputPath);
             
