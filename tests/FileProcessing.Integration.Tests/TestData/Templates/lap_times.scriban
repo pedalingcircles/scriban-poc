@@ -2,8 +2,8 @@
 {{ for row in Rows }}
   {{ if for.index > 0 }},{{ end }}
   {
-    {{ for key in row.Keys }}
-      "{{ key }}": "{{ row[key] }}"{{ if !for.last }},{{ end }}
+    {{ for pair in row }}
+      "{{ pair.key }}": {{ pair.value | json_string }}{{ if !for.last }},{{ end }}
     {{ end }}
   }
 {{ end }}
