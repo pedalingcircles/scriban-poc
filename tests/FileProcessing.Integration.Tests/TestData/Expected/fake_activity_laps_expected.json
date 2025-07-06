@@ -1,5 +1,7 @@
-{
-  "sdk": {
-    "version": "SDK_VERSION"
+[{
+    "Laps": "1","Time": "2:17:52","Cumulative Time": "2:17:52","Distance": "14.06","Paved": "36%","Unpaved": "64%","Avg Speed": "6.1","Avg HR": "146","Max HR": "177","Total Ascent": "1,690","Total Descent": "1,670","Calories": "1,099","Avg Temperature": "89.6","Max Speed": "31.9","Moving Time": "1:44:35","Avg Moving Speed": "8.1"
   }
-}
+,{
+    "Laps": "Summary","Time": "2:17:52","Cumulative Time": "2:17:52","Distance": "14.06","Paved": "36%","Unpaved": "64%","Avg Speed": "6.1","Avg HR": "146","Max HR": "177","Total Ascent": "1,690","Total Descent": "1,670","Calories": "1,099","Avg Temperature": "89.6","Max Speed": "31.9","Moving Time": "1:44:35","Avg Moving Speed": "8.1"
+  }
+]
