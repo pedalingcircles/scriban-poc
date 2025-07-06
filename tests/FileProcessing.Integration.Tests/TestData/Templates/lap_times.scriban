@@ -1,0 +1,14 @@
+{{- # 
+    This template expects an object 'rows' which is a list of dictionaries,
+    each representing a row from fake_activity_laps_data.csv.
+-}}
+[
+{{ for row in rows -}}
+    {{- if for.index > 0 }},{{ end }}
+    {
+        {{ for key in row.keys }}
+            "{{ key }}": "{{ row[key] }}"{{ if !for.last }},{{ end }}
+        {{ end }}
+    }
+{{ end }}
+]

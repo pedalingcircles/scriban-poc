@@ -1,0 +1,19 @@
+{{
+    # Read CSV lines (skip header)
+    csv_lines = fake_acvitity_data_csv | string.split '\n' | array.skip 1
+    # Split each line into fields
+    data = csv_lines
+        | array.where (l) => l != ''
+        | array.map (line) => line | string.split ','
+}}
+
+[
+{{ for row in data }}
+  {
+    "timestamp": "{{ row[0] }}",
+    "distance": {{ row[1] }},
+    "speed": {{ row[2] }},
+    "power": {{ row[3] }}
+  }{{ if for.last == false }},{{ end }}
+{{ end }}
+]
