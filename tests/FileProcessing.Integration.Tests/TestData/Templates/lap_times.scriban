@@ -1,13 +1,10 @@
 [
-{{- for row in rows }}
-  {{- if for.index > 0 }},{{ end }}
+{{ for row in Rows }}
+  {{ if for.index > 0 }},{{ end }}
   {
-    {{- $first = true }}
-    {{- for key in row.keys }}
-      {{- if !$first }},{{ end }}
-      {{- $first = false }}
-    "{{ key }}": "{{ row[key] }}"
-    {{- end }}
+    {{ for key in row.Keys }}
+      "{{ key }}": "{{ row[key] }}"{{ if !for.last }},{{ end }}
+    {{ end }}
   }
-{{- end }}
+{{ end }}
 ]
