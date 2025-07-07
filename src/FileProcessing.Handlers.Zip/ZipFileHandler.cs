@@ -6,52 +6,88 @@ using FileProcessing.Core.Services;
 
 namespace FileProcessing.Handlers.Zip;
 
-public class ZipFileHandler : IFileFormatHandler
+public class ZipFileHandler : ICompositeFileHandler
 {
 
-    private static readonly string[] _extensions = 
+    private static readonly string[] _extensions =
         { ".zip", ".zipx", ".gz", ".gzip" };
+
 
     private readonly FileFormatDetector _detector;
 
     public ZipFileHandler(FileFormatDetector detector)
         => _detector = detector;
 
-        public bool CanHandle(FileInfo file)
-        {
-            // First check extension
-            if (!HasZipExtension(file))
-                return false;
+    public bool CanHandle(FileInfo file)
+    {
+        // First check extension
+        if (!HasZipExtension(file))
+            return false;
 
-            // Then validate it's actually a valid ZIP file
-            return IsValidZipFile(file);
+        // Then validate it's actually a valid ZIP file
+        return IsValidZipFile(file);
+    }
+
+
+
+    private static bool HasZipExtension(FileInfo file)
+    {
+        var extension = file.Extension?.ToLowerInvariant();
+        return _extensions.Contains(extension);
+    }
+
+    private static bool IsValidZipFile(FileInfo file)
+    {
+        try
+        {
+            // Try to open as ZIP file - this validates the format
+            using var archive = ZipFile.OpenRead(file.FullName);
+            return true; // If we get here, it's a valid ZIP
         }
-
-        private static bool HasZipExtension(FileInfo file)
+        catch
         {
-            var extension = file.Extension?.ToLowerInvariant();
-            return _extensions.Contains(extension);
+            // Any exception means we can't handle it
+            return false;
         }
+    }
 
-        private static bool IsValidZipFile(FileInfo file)
+    public ParsedData Parse(FileInfo file)
+    {
+        var parsed = new ParsedData();
+        // Implement ZIP file parsing logic here
+        return parsed;
+    }
+
+    public IEnumerable<ParsedData> ProcessContainedFiles(FileInfo file, FileFormatDetector detector)
+    {
+        var results = new List<ParsedData>();
+        try
         {
-            try
+            using var archive = ZipFile.OpenRead(file.FullName);
+            foreach (var entry in archive.Entries)
             {
-                // Try to open as ZIP file - this validates the format
-                using var archive = ZipFile.OpenRead(file.FullName);
-                return true; // If we get here, it's a valid ZIP
-            }
-            catch
-            {
-                // Any exception means we can't handle it
-                return false;
+                if (!entry.FullName.EndsWith("/")) // skip directories
+                {
+                    using var entryStream = entry.Open();
+                    var tempFile = Path.GetTempFileName();
+                    using (var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write))
+                    {
+                        entryStream.CopyTo(fs);
+                    }
+                    var entryFileInfo = new FileInfo(tempFile);
+                    var parsed = detector.Parse(entryFileInfo);
+                    if (parsed != null)
+                    {
+                        results.Add(parsed);
+                    }
+                    File.Delete(tempFile);
+                }
             }
         }
-
-        public ParsedData Parse(FileInfo file)
+        catch
         {
-            var parsed = new ParsedData();
-            // Implement ZIP file parsing logic here
-            return parsed;
+            // Handle exceptions as needed
         }
+        return results;
+    }
 }

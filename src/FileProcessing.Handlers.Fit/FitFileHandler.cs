@@ -14,11 +14,9 @@ public class FitFileHandler : IFileFormatHandler
     public ParsedData Parse(FileInfo file)
     {
         var parsed = new ParsedData();
-        using var reader = new StreamReader(file.FullName);
 
         // Attempt to open the input file
         FileStream fileStream = new FileStream(file.FullName, FileMode.Open);
-        Console.WriteLine($"Opening {file.FullName}");
 
         // Create our FIT Decoder
         FitDecoder fitDecoder = new FitDecoder(fileStream, Dynastream.Fit.File.Activity);
