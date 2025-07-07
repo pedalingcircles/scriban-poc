@@ -36,6 +36,33 @@ public class ZipFileHandler : ICompositeFileHandler
         }
     }
 
+    private bool CanHandleContainedFiles(FileInfo file, FileFormatDetector detector)
+    {
+        bool canHandle = false;
+        try
+        {
+            using var archive = ZipFile.OpenRead(file.FullName);
+            foreach (var entry in archive.Entries)
+            {
+                if (!entry.FullName.EndsWith("/")) // skip directories
+                {
+                    using var entryStream = entry.Open();
+                    var handler = detector.Detect(entryStream);
+
+                    if (handler != null)
+                    {
+                        return true;
+                    }
+                }
+            }
+        }
+        catch
+        {
+            // Handle exceptions as needed
+        }
+        return canHandle;
+    }
+
     public ZipFileHandler(FileFormatDetector detector)
         => _detector = detector;
 
@@ -55,6 +82,8 @@ public class ZipFileHandler : ICompositeFileHandler
         // Implement ZIP file parsing logic here
         return parsed;
     }
+
+
 
     public IEnumerable<ParsedData> ProcessContainedFiles(FileInfo file, FileFormatDetector detector)
     {
