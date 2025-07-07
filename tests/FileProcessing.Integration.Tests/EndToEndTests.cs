@@ -96,7 +96,6 @@ namespace FileProcessing.Integration.Tests
             
             // Validate it's valid JSON
             var jsonDoc = JsonDocument.Parse(result);
-            Assert.NotNull(jsonDoc.RootElement);
         }
     }
 }
