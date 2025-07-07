@@ -19,7 +19,12 @@ namespace FileProcessing.Handlers.Fit.Extensions
             {
                 return null;
             }
-            return TimeSpan.FromSeconds((int)activity.GetLocalTimestamp() - (int)activity.GetTimestamp().GetTimeStamp());
+            var fitTimestamp = activity.GetTimestamp();
+            if (fitTimestamp == null)
+            {
+                return null;
+            }
+            return TimeSpan.FromSeconds((int)(activity.GetLocalTimestamp() ?? 0) - (int)(fitTimestamp?.GetTimeStamp() ?? 0));
         }
         public static System.DateTime LocalTimestampAsSystemDateTime(this ActivityMesg activity)
         {
@@ -31,7 +36,7 @@ namespace FileProcessing.Handlers.Fit.Extensions
             return new Dynastream.Fit.DateTime(activity.GetLocalTimestamp() ?? 0);
         }
 
-        public static Dynastream.Fit.DateTime GetTimestamp(this Mesg mesg)
+        public static Dynastream.Fit.DateTime? GetTimestamp(this Mesg mesg)
         {
             Object val = mesg.GetFieldValue(TimestampFieldId);
             if (val == null)
@@ -42,7 +47,7 @@ namespace FileProcessing.Handlers.Fit.Extensions
             return mesg.TimestampToDateTime(Convert.ToUInt32(val));
         }
 
-        public static Dynastream.Fit.DateTime GetStartTime(this Mesg mesg)
+        public static Dynastream.Fit.DateTime? GetStartTime(this Mesg mesg)
         {
             Object val = mesg.GetFieldValue("StartTime");
             if (val == null)
@@ -53,7 +58,7 @@ namespace FileProcessing.Handlers.Fit.Extensions
             return mesg.TimestampToDateTime(Convert.ToUInt32(val));
 
         }
-        public static Dynastream.Fit.DateTime GetEndTime(this Mesg mesg)
+        public static Dynastream.Fit.DateTime? GetEndTime(this Mesg mesg)
         {
             var startTime = mesg.GetStartTime();
             if (startTime == null)
@@ -72,7 +77,7 @@ namespace FileProcessing.Handlers.Fit.Extensions
 
         }
 
-        public static string GetValueAsString(this Mesg mesg, String name)
+        public static string? GetValueAsString(this Mesg mesg, String name)
         {
             Field field = mesg.GetField(name, false);
             if (field == null)
@@ -92,19 +97,23 @@ namespace FileProcessing.Handlers.Fit.Extensions
                 return false;
             }
 
-            return Math.Max(mesg.GetStartTime().GetTimeStamp(), session.GetStartTime().GetTimeStamp()) <=
-                   Math.Min(mesg.GetEndTime().GetTimeStamp(), session.GetEndTime().GetTimeStamp());
+            return Math.Max(mesg.GetStartTime()!.GetTimeStamp(), session.GetStartTime()!.GetTimeStamp()) <=
+                   Math.Min(mesg.GetEndTime()!.GetTimeStamp(), session.GetEndTime()!.GetTimeStamp());
         }
 
         public static bool Within(this Mesg mesg, SessionMesg session)
         {
-            if (mesg.GetTimestamp() == null || session.GetStartTime() == null || session.GetEndTime() == null)
+            var timestamp = mesg.GetTimestamp();
+            var sessionStart = session.GetStartTime();
+            var sessionEnd = session.GetEndTime();
+
+            if (timestamp == null || sessionStart == null || sessionEnd == null)
             {
                 return false;
             }
 
-            return mesg.GetTimestamp().GetDateTime() >= session.GetStartTime().GetDateTime()
-                && mesg.GetTimestamp().GetDateTime() <= session.GetEndTime().GetDateTime();
+            return timestamp.GetDateTime() >= sessionStart.GetDateTime()
+                && timestamp.GetDateTime() <= sessionEnd.GetDateTime();
         }
     }
 }

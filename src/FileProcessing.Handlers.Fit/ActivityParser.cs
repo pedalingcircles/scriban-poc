@@ -9,8 +9,8 @@ public class ActivityParser
     private FitMessages _messages;
     public bool IsActivityFile => _firstFileIdMesg != null ? (_firstFileIdMesg.GetType() ?? Dynastream.Fit.File.Invalid) == Dynastream.Fit.File.Activity : false;
 
-    public FileIdMesg _firstFileIdMesg => _messages.FileIdMesgs.FirstOrDefault();
-    public ActivityMesg _activityMesg => _messages.ActivityMesgs.FirstOrDefault();
+    public FileIdMesg? _firstFileIdMesg => _messages.FileIdMesgs.FirstOrDefault();
+    public ActivityMesg? _activityMesg => _messages.ActivityMesgs.FirstOrDefault();
 
     public ActivityParser(FitMessages messages)
     {
@@ -21,7 +21,7 @@ public class ActivityParser
     {
         if (!IsActivityFile)
         {
-            throw new Exception($"Expected FIT File Type: Activity, recieved File Type: {_firstFileIdMesg?.GetType()}");
+            throw new Exception($"Expected FIT File Type: Activity, received File Type: {_firstFileIdMesg?.GetType()}");
         }
 
         // Create a read/write list of session messages

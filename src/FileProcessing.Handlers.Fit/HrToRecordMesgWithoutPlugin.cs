@@ -47,8 +47,9 @@ public class HrToRecordMesgWithoutPlugin
                     hr_anchor_timestamp = new Dynastream.Fit.DateTime(hrMesg.GetTimestamp());
                     hr_anchor_set = true;
 
-                    if (hrMesg.GetFractionalTimestamp() != null)
-                        hr_anchor_timestamp.Add((double)hrMesg.GetFractionalTimestamp());
+                    var fractionalTimestamp = hrMesg.GetFractionalTimestamp();
+                    if (fractionalTimestamp != null)
+                        hr_anchor_timestamp.Add((double)fractionalTimestamp.Value);
 
                     if (hrMesg.GetNumEventTimestamp() == 1)
                     {
@@ -88,16 +89,27 @@ public class HrToRecordMesgWithoutPlugin
                             throw new FitException("FIT HrToRecordMesgBroadcastPlugin Error: Anchor event_timestamp is greater than subsequent event_timestamp. This does not allow for correct delta calculation.");
                         }
                     }
-                    hrMesgTime.Add((double)(event_timestamp - hr_anchor_event_timestamp));
+                    if (event_timestamp.HasValue && hr_anchor_event_timestamp.HasValue)
+                    {
+                        hrMesgTime.Add((double)(event_timestamp.Value - hr_anchor_event_timestamp.Value));
+                    }
+                    else
+                    {
+                        throw new FitException("FIT HrToRecordMesgBroadcastPlugin Error: event_timestamp or hr_anchor_event_timestamp is null.");
+                    }
 
                     // Check if hrMesgTime is gt record start time
                     // and if hrMesgTime is lte to record end time
                     if ((hrMesgTime.CompareTo(record_range_start_time) > 0) &&
                        (hrMesgTime.CompareTo(record_range_end_time) <= 0))
                     {
-                        hrSum += (long)hrMesg.GetFilteredBpm(j);
-                        hrSumCount++;
-                        last_valid_hr_time = new Dynastream.Fit.DateTime(hrMesgTime);
+                        var filteredBpm = hrMesg.GetFilteredBpm(j);
+                        if (filteredBpm.HasValue)
+                        {
+                            hrSum += (long)filteredBpm.Value;
+                            hrSumCount++;
+                            last_valid_hr_time = new Dynastream.Fit.DateTime(hrMesgTime);
+                        }
 
                     }
                     // check if hrMesgTime exceeds the record time

@@ -5,11 +5,11 @@ namespace FileProcessing.Handlers.Fit;
 
 public class SessionMessages
 {
-    public ActivityMesg Activity;
+    public ActivityMesg? Activity;
     public List<ClimbProMesg> ClimbPros = new List<ClimbProMesg>();
     public List<DeviceInfoMesg> DeviceInfos = new List<DeviceInfoMesg>();
     public List<EventMesg> Events = new List<EventMesg>();
-    public FileIdMesg FileId;
+    public FileIdMesg? FileId;
     public List<LapMesg> Laps = new List<LapMesg>();
     public List<LengthMesg> Lengths = new List<LengthMesg>();
     public HashSet<string> RecordFieldNames = new HashSet<string>();

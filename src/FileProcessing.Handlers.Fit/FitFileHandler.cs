@@ -58,6 +58,6 @@ public class FitFileHandler : IFileFormatHandler
 
 
 
-        // return parsed;
+        return parsed;
     }
 }

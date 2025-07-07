@@ -67,7 +67,7 @@ public class Export
 
             foreach (string devFieldName in RecordDeveloperFieldNames)
             {
-                DeveloperField devField = record.DeveloperFields.Where(f => f.Name == devFieldName).FirstOrDefault();
+                DeveloperField? devField = record.DeveloperFields.Where(f => f.Name == devFieldName).FirstOrDefault();
                 if (devField != null)
                 {
                     stringBuilder.Append($"{devField.GetValue(0)}");

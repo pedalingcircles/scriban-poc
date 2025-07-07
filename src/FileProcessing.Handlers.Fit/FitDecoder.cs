@@ -31,14 +31,33 @@ public class FitDecoder
         }
 
         // Create the Message Broadcaster Object
-        MesgBroadcaster mesgBroadcaster = new MesgBroadcaster();
+        MesgBroadcaster messageBroadcaster = new MesgBroadcaster();
 
         // Connect the the Decode and Message Broadcaster Objects
-        decoder.MesgEvent += mesgBroadcaster.OnMesg;
+        decoder.MesgEvent += messageBroadcaster.OnMesg;
 
         // Connect Message Broadcaster Events to their onMesg delegates
-        mesgBroadcaster.FileIdMesgEvent += OnFileIdMesg;
-        mesgBroadcaster.RecordMesgEvent += OnRecordMesg;
+        messageBroadcaster.FileIdMesgEvent += (sender, e) =>
+        {
+            if ((e.mesg as FileIdMesg)?.GetType() != fileType)
+            {
+                throw new Exception($"Expected FIT File Type: {fileType}, received File Type: {(e.mesg as FileIdMesg)?.GetType()}");
+            }
+        };
+
+        messageBroadcaster.RecordMesgEvent += (sender, e) =>
+        {
+            // Use LINQ for more modern field processing
+            RecordFieldNames.UnionWith(
+                e.mesg.Fields
+                    .Where(field => !string.Equals(field.Name, "unknown", StringComparison.OrdinalIgnoreCase))
+                    .Select(field => field.Name)
+            );
+
+            RecordDeveloperFieldNames.UnionWith(
+                e.mesg.DeveloperFields.Select(devField => devField.Name)
+            );
+        };
 
         // Connect FitListener to get lists of each message type with FitMessages
         decoder.MesgEvent += _fitListener.OnMesg;
@@ -57,36 +76,8 @@ public class FitDecoder
 
             return readOK;
         }
-        catch (System.Exception ex)
-        {
-            throw (ex);
-        }
         finally
         {
-        }
-    }
-
-    public void OnFileIdMesg(object sender, MesgEventArgs e)
-    {
-        if ((e.mesg as FileIdMesg).GetType() != fileType)
-        {
-            throw new Exception($"Expected FIT File Type: {fileType}, recieved File Type: {(e.mesg as FileIdMesg).GetType()}");
-        }
-    }
-
-    public void OnRecordMesg(object sender, MesgEventArgs e)
-    {
-        foreach (Field field in e.mesg.Fields)
-        {
-            if (field.Name.ToLower() != "unknown")
-            {
-                RecordFieldNames.Add(field.Name);
-            }
-        }
-
-        foreach (DeveloperField devField in e.mesg.DeveloperFields)
-        {
-            RecordDeveloperFieldNames.Add(devField.Name);
         }
     }
 }
