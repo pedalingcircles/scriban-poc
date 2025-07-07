@@ -1,6 +1,8 @@
+using System;
 using FileProcessing.Core.Interfaces;
 using FileProcessing.Core.Models;
 using Dynastream.Fit;
+using FileProcessing.Handlers.Fit.Extensions;
 
 namespace FileProcessing.Handlers.Fit;
 
@@ -14,37 +16,48 @@ public class FitFileHandler : IFileFormatHandler
         var parsed = new ParsedData();
         using var reader = new StreamReader(file.FullName);
 
-
+        // Attempt to open the input file
         FileStream fileStream = new FileStream(file.FullName, FileMode.Open);
-        Decode decoder = new Decode();
-        // Check that this is a FIT file
-        if (!decoder.IsFIT(fileStream))
+        Console.WriteLine($"Opening {file.FullName}");
+
+        // Create our FIT Decoder
+        FitDecoder fitDecoder = new FitDecoder(fileStream, Dynastream.Fit.File.Activity);
+
+        // Decode the FIT file
+        try
         {
-            throw new Exception($"Expected FIT File Type: {Dynastream.Fit.File.Activity}, received a non FIT file.");
+            Console.WriteLine("Decoding...");
+            fitDecoder.Decode();
         }
-        // Create the Message Broadcaster Object
-        MesgBroadcaster messageBroadcaster = new MesgBroadcaster();
-
-        messageBroadcaster.MesgEvent += (sender, mesg) =>
+        catch (FitException ex)
         {
-            // Handle the message as needed
-            // For example, you can log it or store it in a collection
-            Console.WriteLine($"Received message: {mesg}");
-        };
+            Console.WriteLine("DecodeDemo caught FitException: " + ex.Message);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine("DecodeDemo caught Exception: " + ex.Message);
+        }
+        finally
+        {
+            fileStream.Close();
+        }
 
-        // var config = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture);
-        // using var csv    = new CsvHelper.CsvReader(reader, config);
+        // Check the time zone offset in the Activity message.
+        var timezoneOffset = fitDecoder.FitMessages.ActivityMesgs.FirstOrDefault()?.TimezoneOffset();
+        Console.WriteLine($"The timezone offset for this activity file is {timezoneOffset?.TotalHours ?? 0} hours.");
 
-        // var records = csv.GetRecords<dynamic>()
-        //                  .Cast<IDictionary<string, object>>()
-        //                  .ToList();
+        // Create the Activity Parser and group the messages into individual sessions.
+        ActivityParser activityParser = new ActivityParser(fitDecoder.FitMessages);
+        var sessions = activityParser.ParseSessions();
 
-        // // e.g. expose rows as a list of dictionaries
-        // parsed.Data["Rows"]      = records;
-        // parsed.Data["RowCount"]  = records.Count;
-        // parsed.Data["FileName"]  = file.Name;
-        // parsed.Data["ImportedAt"]= DateTime.UtcNow;
 
-        return parsed;
+
+
+
+
+
+
+
+        // return parsed;
     }
 }
