@@ -15,21 +15,6 @@ public class ZipFileHandler : ICompositeFileHandler
 
     private readonly FileFormatDetector _detector;
 
-    public ZipFileHandler(FileFormatDetector detector)
-        => _detector = detector;
-
-    public bool CanHandle(FileInfo file)
-    {
-        // First check extension
-        if (!HasZipExtension(file))
-            return false;
-
-        // Then validate it's actually a valid ZIP file
-        return IsValidZipFile(file);
-    }
-
-
-
     private static bool HasZipExtension(FileInfo file)
     {
         var extension = file.Extension?.ToLowerInvariant();
@@ -49,6 +34,19 @@ public class ZipFileHandler : ICompositeFileHandler
             // Any exception means we can't handle it
             return false;
         }
+    }
+
+    public ZipFileHandler(FileFormatDetector detector)
+        => _detector = detector;
+
+    public bool CanHandle(FileInfo file)
+    {
+        // First check extension
+        if (!HasZipExtension(file))
+            return false;
+
+        // Then validate it's actually a valid ZIP file
+        return IsValidZipFile(file);
     }
 
     public ParsedData Parse(FileInfo file)
