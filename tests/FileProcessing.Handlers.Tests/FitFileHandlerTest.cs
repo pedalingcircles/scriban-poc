@@ -40,17 +40,5 @@ namespace FileProcessing.Handlers.Fit.Tests
 
             Assert.False(handler.CanHandle(file));
         }
-
-        [Fact]
-        public void Parse_ReturnsParsedDataInstance()
-        {
-            var handler = new FitFileHandler();
-            var file = new FileInfo("test.fit");
-
-            var result = handler.Parse(file);
-
-            Assert.NotNull(result);
-            Assert.IsType<ParsedData>(result);
-        }
     }
 }

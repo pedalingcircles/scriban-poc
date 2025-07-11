@@ -18,6 +18,11 @@ public class FileProcessor
     {
         var handler = _detector.Detect(file);
         var data    = handler.Parse(file);
-        return _engine.Render(templateContent, data.Data);
+        // Convert IEnumerable<ParsedData> to IDictionary<string, object>
+        var dataDict = new Dictionary<string, object>
+        {
+            { "items", data }
+        };
+        return _engine.Render(templateContent, dataDict);
     }
 }

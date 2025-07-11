@@ -50,12 +50,13 @@ namespace FileProcessing.Handlers.Csv.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result.Data.ContainsKey("Rows"));
-            Assert.True(result.Data.ContainsKey("RowCount"));
-            Assert.True(result.Data.ContainsKey("FileName"));
-            Assert.True(result.Data.ContainsKey("ImportedAt"));
+            var parsedData = Assert.Single(result);
+            Assert.True(parsedData.Data.ContainsKey("Rows"));
+            Assert.True(parsedData.Data.ContainsKey("RowCount"));
+            Assert.True(parsedData.Data.ContainsKey("FileName"));
+            Assert.True(parsedData.Data.ContainsKey("ImportedAt"));
 
-            var rows = result.Data["Rows"] as List<IDictionary<string, object>>;
+            var rows = parsedData.Data["Rows"] as List<IDictionary<string, object>>;
             Assert.NotNull(rows);
             Assert.Equal(2, rows.Count);
             Assert.Equal("Alice", rows[0]["Name"].ToString());
@@ -63,9 +64,9 @@ namespace FileProcessing.Handlers.Csv.Tests
             Assert.Equal("Bob", rows[1]["Name"].ToString());
             Assert.Equal("25", rows[1]["Age"].ToString());
 
-            Assert.Equal(2, (int)result.Data["RowCount"]);
-            Assert.Equal(file.Name, result.Data["FileName"]);
-            Assert.IsType<DateTime>(result.Data["ImportedAt"]);
+            Assert.Equal(2, (int)parsedData.Data["RowCount"]);
+            Assert.Equal(file.Name, parsedData.Data["FileName"]);
+            Assert.IsType<DateTime>(parsedData.Data["ImportedAt"]);
 
             // Cleanup
             File.Delete(filePath);

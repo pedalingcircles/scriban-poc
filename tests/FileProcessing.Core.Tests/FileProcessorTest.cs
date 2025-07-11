@@ -19,20 +19,27 @@ namespace FileProcessing.Core.Services.Tests
         {
             // Arrange
             var file = new FileInfo("test.txt");
-            var templateContent = "Hello {{name}}!";
-            var expectedData = new System.Collections.Generic.Dictionary<string, object> { { "name", "World" } };
+            var templateContent = "Hello {{items[0].name}}!";
+            var expectedData = new Dictionary<string, object> { { "name", "World" } };
             var expectedRendered = "Hello World!";
 
+            var parsedData = new FileProcessing.Core.Models.ParsedData { Data = expectedData };
             var mockHandler = new Mock<IFileFormatHandler>();
-            mockHandler.Setup(h => h.Parse(file)).Returns(new FileProcessing.Core.Models.ParsedData { Data = expectedData });
+            mockHandler.Setup(h => h.Parse(file)).Returns([parsedData]);
             mockHandler.Setup(h => h.CanHandle(file)).Returns(true);
 
-            // Use real detector and register the mock handler
             var detector = new FileFormatDetector();
             detector.RegisterHandler(mockHandler.Object);
 
             var mockEngine = new Mock<ITemplateEngine>();
-            mockEngine.Setup(e => e.Render(templateContent, expectedData)).Returns(expectedRendered);
+            
+            // Verify the template and data structure match expectations
+            mockEngine.Setup(e => e.Render(
+                templateContent, 
+                It.Is<IDictionary<string, object>>(d => 
+                    d.ContainsKey("items") && 
+                    d["items"] is IEnumerable<FileProcessing.Core.Models.ParsedData>)))
+                    .Returns(expectedRendered);
 
             var processor = new FileProcessor(detector, mockEngine.Object);
 

@@ -11,12 +11,12 @@ public class CsvFileHandler : IFileFormatHandler
     public bool CanHandle(FileInfo file)
         => file.Extension.Equals(".csv", StringComparison.OrdinalIgnoreCase);
 
-    public ParsedData Parse(FileInfo file)
+    public IEnumerable<ParsedData> Parse(FileInfo file)
     {
         var parsed = new ParsedData();
         using var reader = new StreamReader(file.FullName);
         var config = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture);
-        using var csv    = new CsvHelper.CsvReader(reader, config);
+        using var csv = new CsvHelper.CsvReader(reader, config);
 
         var records = csv.GetRecords<dynamic>()
                          .Cast<IDictionary<string, object>>()
@@ -28,6 +28,6 @@ public class CsvFileHandler : IFileFormatHandler
         parsed.Data["FileName"]  = file.Name;
         parsed.Data["ImportedAt"]= DateTime.UtcNow;
 
-        return parsed;
+        return [parsed];
     }
 }

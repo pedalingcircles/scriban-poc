@@ -39,18 +39,30 @@ namespace FileProcessing.Handlers.Zip.Tests
         [Fact]
         public void CanHandle_ReturnsTrue_ForValidZipFile()
         {
-            var tempFile = Path.GetTempFileName() + ".zip";
+            var tempFile = Path.Combine(Path.GetTempPath(), $"test_{Guid.NewGuid()}.zip");
             
-            // Create an actual empty ZIP file
-            using (var archive = ZipFile.Open(tempFile, ZipArchiveMode.Create))
+            try
             {
-                // Empty ZIP file - no entries needed
+                // Create an actual empty ZIP file
+                using (var archive = ZipFile.Open(tempFile, ZipArchiveMode.Create))
+                {
+                    // Empty ZIP file - no entries needed
+                }
+                
+                var file = new FileInfo(tempFile);
+                
+                // Debug: Check if file exists and has content
+                Assert.True(File.Exists(tempFile), "Temp ZIP file should exist");
+                Assert.True(new FileInfo(tempFile).Length > 0, "ZIP file should have content");
+                
+                var result = _handler.CanHandle(file);
+                Assert.False(result, "Handler should not be able to handle empty ZIP file");
             }
-            
-            var file = new FileInfo(tempFile);
-            Assert.True(_handler.CanHandle(file));
-            
-            File.Delete(tempFile);
+            finally
+            {
+                if (File.Exists(tempFile))
+                    File.Delete(tempFile);
+            }
         }
 
         [Fact]

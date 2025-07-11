@@ -6,7 +6,7 @@ using FileProcessing.Core.Services;
 
 namespace FileProcessing.Handlers.Zip;
 
-public class ZipFileHandler : ICompositeFileHandler
+public class ZipFileHandler : IFileFormatHandler
 {
 
     private static readonly string[] _extensions =
@@ -88,11 +88,11 @@ public class ZipFileHandler : ICompositeFileHandler
 
     }
 
-    public ParsedData Parse(FileInfo file)
+    public IEnumerable<ParsedData> Parse(FileInfo file)
     {
         var parsed = new ParsedData();
         // Implement ZIP file parsing logic here
-        return parsed;
+        return [parsed];
     }
 
 
@@ -115,11 +115,11 @@ public class ZipFileHandler : ICompositeFileHandler
                     }
                     var entryFileInfo = new FileInfo(tempFile);
                     var handler = detector.Detect(entryFileInfo);
-                    var parsed = handler.Parse(entryFileInfo);
+                    var parsedItems = handler.Parse(entryFileInfo);
 
-                    if (parsed != null)
+                    if (parsedItems != null)
                     {
-                        results.Add(parsed);
+                        results.AddRange(parsedItems);
                     }
                     File.Delete(tempFile);
                 }
