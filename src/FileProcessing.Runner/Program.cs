@@ -3,6 +3,7 @@ using FileProcessing.Core.Services;
 using FileProcessing.Handlers.Csv;
 using FileProcessing.Handlers.Gpx;
 using FileProcessing.Handlers.Fit;
+using FileProcessing.Handlers.Zip;
 using FileProcessing.Templating;
 
 // 1. Build detector & register handlers
@@ -10,6 +11,7 @@ var detector = new FileFormatDetector();
 detector.RegisterHandler(new CsvFileHandler());
 detector.RegisterHandler(new GpxFileHandler());  // similar style
 detector.RegisterHandler(new FitFileHandler());  // binary parsing
+detector.RegisterHandler(new ZipFileHandler(detector));  // ZIP file handling
 
 // 2. Pick a template engine (Scriban, Liquid, etc.)
 ITemplateEngine engine = new ScribanAdapter(); // or LiquidAdapter

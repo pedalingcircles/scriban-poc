@@ -10,8 +10,7 @@ public class ZipFileHandler : ICompositeFileHandler
 {
 
     private static readonly string[] _extensions =
-        { ".zip", ".zipx", ".gz", ".gzip" };
-
+        [".zip", ".zipx", ".gz", ".gzip"];
 
     private readonly FileFormatDetector _detector;
 
@@ -36,7 +35,7 @@ public class ZipFileHandler : ICompositeFileHandler
         }
     }
 
-    private bool CanHandleContainedFiles(FileInfo file, FileFormatDetector detector)
+    private static bool CanHandleContainedFiles(FileInfo file, FileFormatDetector detector)
     {
         bool canHandle = false;
         try
@@ -44,10 +43,18 @@ public class ZipFileHandler : ICompositeFileHandler
             using var archive = ZipFile.OpenRead(file.FullName);
             foreach (var entry in archive.Entries)
             {
-                if (!entry.FullName.EndsWith("/")) // skip directories
+                if (!entry.FullName.EndsWith('/')) // skip directories
                 {
                     using var entryStream = entry.Open();
-                    var handler = detector.Detect(entryStream);
+                    var tempFile = Path.GetTempFileName();
+                    using (var fs = new FileStream(tempFile, FileMode.Create, FileAccess.Write))
+                    {
+                        entryStream.CopyTo(fs);
+                    }
+                    var entryFileInfo = new FileInfo(tempFile);
+                    var handler = detector.Detect(entryFileInfo);
+
+                    File.Delete(tempFile);
 
                     if (handler != null)
                     {
@@ -73,7 +80,12 @@ public class ZipFileHandler : ICompositeFileHandler
             return false;
 
         // Then validate it's actually a valid ZIP file
-        return IsValidZipFile(file);
+        if (!IsValidZipFile(file))
+            return false;
+
+        // Finally check if we can handle contained files
+        return CanHandleContainedFiles(file, _detector);
+
     }
 
     public ParsedData Parse(FileInfo file)
@@ -102,7 +114,9 @@ public class ZipFileHandler : ICompositeFileHandler
                         entryStream.CopyTo(fs);
                     }
                     var entryFileInfo = new FileInfo(tempFile);
-                    var parsed = detector.Parse(entryFileInfo);
+                    var handler = detector.Detect(entryFileInfo);
+                    var parsed = handler.Parse(entryFileInfo);
+
                     if (parsed != null)
                     {
                         results.Add(parsed);
