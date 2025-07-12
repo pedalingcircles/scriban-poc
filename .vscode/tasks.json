@@ -22,7 +22,7 @@
 			"args": [
 				"run",
 				"--project",
-				"src/FileProcessing.Runner/FileProcessing.Runner.csproj"
+				"src/Runner/Runner.csproj"
 			],
 			"group": "build",
 			"dependsOn": "build",
@@ -43,7 +43,7 @@
 			"args": [
 				"run",
 				"--project",
-				"src/FileProcessing.Runner/FileProcessing.Runner.csproj",
+				"src/Runner/Runner.csproj",
 				"--",
 				"${input:programArgs}"
 			],

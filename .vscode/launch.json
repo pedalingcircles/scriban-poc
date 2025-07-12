@@ -2,41 +2,41 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Debug FileProcessor.Runner",
+            "name": "Debug Runner",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/FileProcessing.Runner/bin/Debug/net9.0/FileProcessing.Runner.dll",
+            "program": "${workspaceFolder}/src/Runner/bin/Debug/net9.0/Runner.dll",
             "args": [],
-            "cwd": "${workspaceFolder}/src/FileProcessing.Runner",
+            "cwd": "${workspaceFolder}/src/Runner",
             "console": "internalConsole",
             "stopAtEntry": false
         },
         {
-            "name": "Debug FileProcessor.Runner (with args)",
+            "name": "Debug Runner (with args)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/FileProcessing.Runner/bin/Debug/net9.0/FileProcessing.Runner.dll",
+            "program": "${workspaceFolder}/src/Runner/bin/Debug/net9.0/Runner.dll",
             "args": [
                 "FileToProcess/default.csv",
                 "Templates/Summary.liquid"
             ],
-            "cwd": "${workspaceFolder}/src/FileProcessing.Runner",
+            "cwd": "${workspaceFolder}/src/Runner",
             "console": "internalConsole",
             "stopAtEntry": false
         },
         {
-            "name": "Debug FileProcessor.Runner (Custom File)",
+            "name": "Debug Runner (Custom File)",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
-            "program": "${workspaceFolder}/src/FileProcessing.Runner/bin/Debug/net9.0/FileProcessing.Runner.dll",
+            "program": "${workspaceFolder}/src/Runner/bin/Debug/net9.0/Runner.dll",
             "args": [
                 "${input:inputFile}",
                 "${input:templateFile}"
             ],
-            "cwd": "${workspaceFolder}/src/FileProcessing.Runner",
+            "cwd": "${workspaceFolder}/src/Runner",
             "console": "internalConsole",
             "stopAtEntry": false
         },

@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj" />
+    <ProjectReference Include="..\Handlers.Csv\Handlers.Csv.csproj" />
+    <ProjectReference Include="..\Handlers.Gpx\Handlers.Gpx.csproj" />
+    <ProjectReference Include="..\Handlers.Fit\Handlers.Fit.csproj" />
+    <ProjectReference Include="..\Handlers.Zip\Handlers.Zip.csproj" />
+    <ProjectReference Include="..\Templating\Templating.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="9.0.7" />
+  </ItemGroup>
+  
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+</Project>
