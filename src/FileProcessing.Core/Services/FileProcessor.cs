@@ -1,5 +1,6 @@
 using System;
 using FileProcessing.Core.Interfaces;
+using FileProcessing.Core.Models;
 
 namespace FileProcessing.Core.Services;
 
@@ -16,13 +17,8 @@ public class FileProcessor
 
     public string Process(FileInfo file, string templateContent)
     {
-        var handler = _detector.Detect(file);
-        var data    = handler.Parse(file);
-        // Convert IEnumerable<ParsedData> to IDictionary<string, object>
-        var dataDict = new Dictionary<string, object>
-        {
-            { "items", data }
-        };
-        return _engine.Render(templateContent, dataDict);
+        IFileFormatHandler handler = _detector.Detect(file);
+        ParsedData data = handler.Parse(file);
+        return _engine.Render(templateContent, data.Data);
     }
 }

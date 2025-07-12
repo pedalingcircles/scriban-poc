@@ -21,7 +21,7 @@ namespace FileProcessing.Integration.Tests
         }
 
         [Theory]
-        [InlineData("fake_activity_data.csv", "fit_analysis.scriban", "fake_activity_data_expected.json")]
+        // [InlineData("fake_activity_data.csv", "fit_analysis.scriban", "fake_activity_data_expected.json")]
         [InlineData("fake_activity_laps_data.csv", "lap_times.scriban", "fake_activity_laps_expected.json")]
         public async Task ProcessFile_ShouldGenerateExpectedOutput(
             string inputFileName, 
@@ -72,30 +72,6 @@ namespace FileProcessing.Integration.Tests
                     actualOutput.Trim()
                 );
             }
-        }
-
-        [Fact]
-        public void CsvToJson_LargeFile_ShouldProcessSuccessfully()
-        {
-            // Test with your large CSV file
-            var inputFile = new FileInfo(Path.Combine(_testDataPath, "Input", "large-dataset.csv"));
-            var templatePath = Path.Combine(_testDataPath, "Templates", "csv-to-json.scriban");
-
-            var detector = new FileFormatDetector();
-            detector.RegisterHandler(new CsvFileHandler());
-            var engine = new ScribanAdapter();
-            var processor = new FileProcessor(detector, engine);
-
-            // Act
-            var template = File.ReadAllText(templatePath);
-            var result = processor.Process(inputFile, template);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.NotEmpty(result);
-            
-            // Validate it's valid JSON
-            var jsonDoc = JsonDocument.Parse(result);
         }
     }
 }

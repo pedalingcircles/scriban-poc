@@ -1,5 +1,6 @@
 using System.IO;
 using FileProcessing.Core.Interfaces;
+using FileProcessing.Core.Models;
 using FileProcessing.Core.Services;
 using Moq;
 using Xunit;
@@ -12,34 +13,29 @@ namespace FileProcessing.Core.Services.Tests
         public object? Data { get; set; }
     }
 
+    // Minimal stub for ParsedData to fix the missing type error
+
+
     public class FileProcessorTest
     {
         [Fact]
-        public void Process_ShouldReturnRenderedContent()
+        public void Process_ShouldReturnRenderedContent_WhenDependenciesReturnExpectedValues()
         {
             // Arrange
-            var file = new FileInfo("test.txt");
-            var templateContent = "Hello {{items[0].name}}!";
-            var expectedData = new Dictionary<string, object> { { "name", "World" } };
-            var expectedRendered = "Hello World!";
-
-            var parsedData = new FileProcessing.Core.Models.ParsedData { Data = expectedData };
             var mockHandler = new Mock<IFileFormatHandler>();
-            mockHandler.Setup(h => h.Parse(file)).Returns([parsedData]);
-            mockHandler.Setup(h => h.CanHandle(file)).Returns(true);
+            var mockEngine = new Mock<ITemplateEngine>();
+            var file = new FileInfo("test.txt");
+            var templateContent = "Hello {{name}}";
+            var parsedData = new ParsedData { Data = new Dictionary<string, object> { { "name", "World" } } };
+            var expectedRendered = "Hello World";
 
+            // Use real detector and register the mock handler
             var detector = new FileFormatDetector();
             detector.RegisterHandler(mockHandler.Object);
 
-            var mockEngine = new Mock<ITemplateEngine>();
-            
-            // Verify the template and data structure match expectations
-            mockEngine.Setup(e => e.Render(
-                templateContent, 
-                It.Is<IDictionary<string, object>>(d => 
-                    d.ContainsKey("items") && 
-                    d["items"] is IEnumerable<FileProcessing.Core.Models.ParsedData>)))
-                    .Returns(expectedRendered);
+            mockHandler.Setup(h => h.CanHandle(file)).Returns(true);
+            mockHandler.Setup(h => h.Parse(file)).Returns(parsedData);
+            mockEngine.Setup(e => e.Render(templateContent, parsedData.Data)).Returns(expectedRendered);
 
             var processor = new FileProcessor(detector, mockEngine.Object);
 
@@ -48,6 +44,50 @@ namespace FileProcessing.Core.Services.Tests
 
             // Assert
             Assert.Equal(expectedRendered, result);
+            mockHandler.Verify(h => h.Parse(file), Times.Once);
+            mockEngine.Verify(e => e.Render(templateContent, parsedData.Data), Times.Once);
         }
+
+
+        [Fact]
+        public void Process_ShouldThrowException_WhenNoHandlerFound()
+        {
+            // Arrange
+            var mockEngine = new Mock<ITemplateEngine>();
+            var file = new FileInfo("test.xyz"); // Use unsupported extension
+            var templateContent = "Hello";
+
+            // Use real detector with no handlers registered
+            var detector = new FileFormatDetector();
+            // Don't register any handlers - this will cause Detect to throw
+
+            var processor = new FileProcessor(detector, mockEngine.Object);
+
+            // Act & Assert
+            Assert.Throws<NotSupportedException>(() => processor.Process(file, templateContent));
+        }
+
+        [Fact]
+        public void Process_ShouldThrowException_WhenParseReturnsNull()
+        {
+            // Arrange
+            var mockHandler = new Mock<IFileFormatHandler>();
+            var mockEngine = new Mock<ITemplateEngine>();
+            var file = new FileInfo("test.txt");
+            var templateContent = "Hello";
+
+            // Use real detector and register mock handler
+            var detector = new FileFormatDetector();
+            detector.RegisterHandler(mockHandler.Object);
+
+            mockHandler.Setup(h => h.CanHandle(file)).Returns(true);
+            mockHandler.Setup(h => h.Parse(file)).Returns((ParsedData)null!);
+
+            var processor = new FileProcessor(detector, mockEngine.Object);
+
+            // Act & Assert
+            Assert.Throws<NullReferenceException>(() => processor.Process(file, templateContent));
+        }
+
     }
 }

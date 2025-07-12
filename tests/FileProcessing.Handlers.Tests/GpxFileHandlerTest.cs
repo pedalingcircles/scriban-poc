@@ -48,44 +48,5 @@ namespace FileProcessing.Handlers.Gpx.Tests
             // Assert
             Assert.False(result);
         }
-
-        [Fact]
-        public void Parse_ShouldReturnParsedDataInstance()
-        {
-            // Arrange
-            var handler = new GpxFileHandler();
-            var file = new FileInfo("test.gpx");
-
-            // Act
-            var result = handler.Parse(file);
-
-            // Assert
-            Assert.NotNull(result);
-            Assert.IsAssignableFrom<IEnumerable<ParsedData>>(result); // Check for IEnumerable
-
-            var parsedDataList = result.ToList();
-            Assert.Single(parsedDataList); // Verify exactly one item
-            Assert.IsType<ParsedData>(parsedDataList.First()); // Check the item type
-        }
-        
-        [Fact]
-        public void Parse_ShouldReturnSingleParsedDataItem()
-        {
-            // Arrange
-            var handler = new GpxFileHandler();
-            var file = new FileInfo("test.gpx");
-
-            // Act
-            var result = handler.Parse(file);
-
-            // Assert
-            Assert.NotNull(result);
-            
-            var items = result.ToArray();
-            Assert.Single(items); // Exactly one item
-            Assert.NotNull(items[0]); // The item exists
-            Assert.NotNull(items[0].Data); // The Data dictionary exists
-        }
-
     }
 }

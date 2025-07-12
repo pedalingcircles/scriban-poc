@@ -11,7 +11,7 @@ public class CsvFileHandler : IFileFormatHandler
     public bool CanHandle(FileInfo file)
         => file.Extension.Equals(".csv", StringComparison.OrdinalIgnoreCase);
 
-    public IEnumerable<ParsedData> Parse(FileInfo file)
+    public ParsedData Parse(FileInfo file)
     {
         var parsed = new ParsedData();
         using var reader = new StreamReader(file.FullName);
@@ -28,6 +28,6 @@ public class CsvFileHandler : IFileFormatHandler
         parsed.Data["FileName"]  = file.Name;
         parsed.Data["ImportedAt"]= DateTime.UtcNow;
 
-        return [parsed];
+        return parsed;
     }
 }

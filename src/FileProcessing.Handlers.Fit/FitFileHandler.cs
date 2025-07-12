@@ -11,7 +11,7 @@ public class FitFileHandler : IFileFormatHandler
     public bool CanHandle(FileInfo file)
         => file.Extension.Equals(".fit", StringComparison.OrdinalIgnoreCase);
 
-    public IEnumerable<ParsedData> Parse(FileInfo file)
+    public ParsedData Parse(FileInfo file)
     {
         var parsed = new ParsedData();
 
@@ -48,6 +48,6 @@ public class FitFileHandler : IFileFormatHandler
         ActivityParser activityParser = new ActivityParser(fitDecoder.FitMessages);
         var sessions = activityParser.ParseSessions();
 
-        return [parsed];
+        return parsed;
     }
 }

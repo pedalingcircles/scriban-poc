@@ -88,11 +88,14 @@ public class ZipFileHandler : IFileFormatHandler
 
     }
 
-    public IEnumerable<ParsedData> Parse(FileInfo file)
+    public ParsedData Parse(FileInfo file)
     {
+        var parsedDataItems = ProcessContainedFiles(file, _detector);
         var parsed = new ParsedData();
-        // Implement ZIP file parsing logic here
-        return [parsed];
+        // Iterate over each file entry and make that a convention when creating the dictionary items. 
+        // e.g. ["filename__rows"] = records, ["filename__rowcount"] = records.Count, etc.
+
+        return parsed;
     }
 
 
