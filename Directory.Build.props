@@ -1,6 +1,64 @@
 <Project>
+
   <PropertyGroup Label="Configure assembly names and namespaces">
     <AssemblyName>$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
+
+  <!-- https://learn.microsoft.com/en-us/dotnet/standard/assembly/set-attributes-project-file -->
+  <!-- https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning -->
+  <PropertyGroup Label="Central version management">
+    <MajorVersion>1</MajorVersion>
+    <MinorVersion>0</MinorVersion>
+    <PatchVersion>0</PatchVersion>
+    <BuildNumber Condition="'$(BuildNumber)' == ''">0</BuildNumber>
+    
+    <!-- Computed versions -->
+    <AssemblyVersion>$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
+    <FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumber)</FileVersion>
+    <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
+
+    <!-- Additional Version Properties -->
+    <InformationalVersion>$(Version)+$(SourceRevisionId)</InformationalVersion>
+    <RepositoryUrl>https://github.com/pedalingcircles/scriban-poc.git</RepositoryUrl>
+    
+    <!-- Additional metadata -->
+    <Company>Byvrate</Company>
+    <Product>FileProcessing</Product>
+    <Copyright>Copyright © Byvrate $([System.DateTime]::Now.Year)</Copyright>
+  </PropertyGroup>
+
+  <!-- Git-based source revision (moved to PropertyGroup) -->
+  <PropertyGroup>
+    <GitCommitId Condition="'$(GitCommitId)' == '' AND Exists('.git')">$([System.String]::new($([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), '.git'))))</GitCommitId>
+  </PropertyGroup>
+
+  <!-- Git-based source revision -->
+  <Target Name="SetSourceRevisionId" BeforeTargets="BeforeBuild">
+    <PropertyGroup>
+      <GitCommand>git</GitCommand>
+      <GitCommand Condition="$([MSBuild]::IsOSPlatform('Windows'))">git.exe</GitCommand>
+    </PropertyGroup>
+    
+    <Exec Command="$(GitCommand) rev-parse --short HEAD" 
+          ConsoleToMSBuild="true" 
+          ContinueOnError="true"
+          Condition="'$(SourceRevisionId)' == '' AND Exists('.git')"
+          WorkingDirectory="$(MSBuildThisFileDirectory)">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitCommitId" />
+      <Output TaskParameter="ExitCode" PropertyName="GitExitCode" />
+    </Exec>
+    
+    <PropertyGroup>
+      <SourceRevisionId Condition="'$(GitExitCode)' == '0' AND '$(GitCommitId)' != ''">$(GitCommitId.Trim())</SourceRevisionId>
+      <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">unknown</SourceRevisionId>
+    </PropertyGroup>
+    
+    <!-- Debug messages -->
+    <Message Text="Git Exit Code: $(GitExitCode)" Importance="high" Condition="'$(GitExitCode)' != ''" />
+    <Message Text="Git Commit ID: '$(GitCommitId)'" Importance="high" />
+    <Message Text="Final Source Revision ID: '$(SourceRevisionId)'" Importance="high" />
+  </Target>
+
+
 </Project>
