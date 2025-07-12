@@ -1,9 +1,6 @@
-using System.IO;
 using Core.Interfaces;
 using Core.Models;
-using Core.Services;
 using Moq;
-using Xunit;
 
 namespace Core.Services.Tests
 {

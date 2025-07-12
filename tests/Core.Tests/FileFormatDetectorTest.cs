@@ -1,11 +1,5 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Collections.Generic;
-using Core.Services;
 using Core.Interfaces;
 using Moq;
-using Xunit;
 
 namespace Core.Services.Tests
 {

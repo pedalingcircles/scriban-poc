@@ -1,8 +1,3 @@
-using System;
-using Handlers.Gpx;
-using Core.Models;
-using Xunit;
-
 namespace Handlers.Gpx.Tests
 {
     public class GpxFileHandlerTest

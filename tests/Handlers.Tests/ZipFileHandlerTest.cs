@@ -1,8 +1,4 @@
-using System.IO;
-using Handlers.Zip;
-using Core.Models;
 using Core.Services;
-using Xunit;
 using System.IO.Compression;
 
 namespace Handlers.Zip.Tests

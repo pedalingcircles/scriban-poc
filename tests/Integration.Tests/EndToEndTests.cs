@@ -3,11 +3,8 @@ using Core.Services;
 using Handlers.Csv;
 using Handlers.Fit;
 using Handlers.Gpx;
-using Handlers.Zip;
 using Templating;
-using System.IO.Compression;
 using System.Text.Json;
-using Xunit;
 
 namespace Integration.Tests
 {

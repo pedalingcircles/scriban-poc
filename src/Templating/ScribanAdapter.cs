@@ -1,4 +1,3 @@
-using System;
 using Core.Interfaces;
 using Scriban;
 namespace Templating;

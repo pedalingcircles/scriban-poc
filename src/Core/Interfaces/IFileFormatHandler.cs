@@ -1,4 +1,3 @@
-using System;
 using Core.Models;
 
 namespace Core.Interfaces;

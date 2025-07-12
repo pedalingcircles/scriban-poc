@@ -1,8 +1,3 @@
-using System;
-using Handlers.Fit;
-using Core.Models;
-using Xunit;
-using System.IO;
 namespace Handlers.Fit.Tests
 {
     public class FitFileHandlerTest
