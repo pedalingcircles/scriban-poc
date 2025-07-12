@@ -11,7 +11,6 @@ public class GpxFileHandler : IFileFormatHandler
     public ParsedData Parse(FileInfo file)
     {
         var parsed = new ParsedData();
-        // Implement GPX file parsing logic here
-        return parsed;
+        throw new NotImplementedException("GpxFileHandler.Parse is not implemented yet.");
     }
 }

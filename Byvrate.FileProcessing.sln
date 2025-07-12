@@ -29,8 +29,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handlers.Zip", "src\Handler
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Integration.Tests", "tests\Integration.Tests\Integration.Tests.csproj", "{E421B1C2-4900-4061-8166-D1E4189FE641}"
 EndProject
-
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions.DependencyInjection", "src\Extensions.DependencyInjection\Extensions.DependencyInjection.csproj", "{DB455653-BDE5-45FD-8E86-6505246FBA1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Handlers.Tcx", "src\Handlers.Tcx\Handlers.Tcx.csproj", "{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -186,6 +187,18 @@ Global
 		{DB455653-BDE5-45FD-8E86-6505246FBA1B}.Release|x64.Build.0 = Release|Any CPU
 		{DB455653-BDE5-45FD-8E86-6505246FBA1B}.Release|x86.ActiveCfg = Release|Any CPU
 		{DB455653-BDE5-45FD-8E86-6505246FBA1B}.Release|x86.Build.0 = Release|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Debug|x64.Build.0 = Debug|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Debug|x86.Build.0 = Debug|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Release|x64.ActiveCfg = Release|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Release|x64.Build.0 = Release|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Release|x86.ActiveCfg = Release|Any CPU
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -203,5 +216,6 @@ Global
 		{606F1B8C-6385-49AD-AFDF-22C80F7764DE} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{E421B1C2-4900-4061-8166-D1E4189FE641} = {0AB3BF05-4346-4AA6-1389-037BE0695223}
 		{DB455653-BDE5-45FD-8E86-6505246FBA1B} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{A4077CF1-E23A-46A7-AE2F-42DE371BA5C8} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal
