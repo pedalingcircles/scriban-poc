@@ -1,4 +1,5 @@
 using System.Globalization;
+using Core.Extensions;
 using Core.Interfaces;
 using Core.Models;
 
@@ -11,7 +12,6 @@ public class CsvFileHandler : IFileFormatHandler
 
     public ParsedData Parse(FileInfo file)
     {
-        var parsed = new ParsedData();
         using var reader = new StreamReader(file.FullName);
         var config = new CsvHelper.Configuration.CsvConfiguration(CultureInfo.InvariantCulture);
         using var csv = new CsvHelper.CsvReader(reader, config);
@@ -21,11 +21,17 @@ public class CsvFileHandler : IFileFormatHandler
                          .ToList();
 
         // e.g. expose rows as a list of dictionaries
-        parsed.Data["Rows"]      = records;
-        parsed.Data["RowCount"]  = records.Count;
-        parsed.Data["FileName"]  = file.Name;
-        parsed.Data["ImportedAt"]= DateTime.UtcNow;
-
+        // parsed.Data["rows"]      = records;
+        // parsed.Data["rowcount"]  = records.Count;
+        // parsed.Data["filename"]  = file.Name;
+        // parsed.Data["timestamp-import"]= DateTime.UtcNow;
+        var parsed = new ParsedData()
+            .SetRows(records)
+            .SetRowCount(records.Count)
+            .SetFileName(file.Name)
+            .SetImportTimestamp()
+            .SetHandlerType<CsvFileHandler>();
+            
         return parsed;
     }
 }

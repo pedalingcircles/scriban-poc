@@ -42,12 +42,12 @@ namespace Handlers.Csv.Tests
 
             // Assert
             Assert.NotNull(result);
-            Assert.True(result.Data.ContainsKey("Rows"));
-            Assert.True(result.Data.ContainsKey("RowCount"));
-            Assert.True(result.Data.ContainsKey("FileName"));
-            Assert.True(result.Data.ContainsKey("ImportedAt"));
+            Assert.True(result.Data.ContainsKey("rows"));
+            Assert.True(result.Data.ContainsKey("rowcount"));
+            Assert.True(result.Data.ContainsKey("filename"));
+            Assert.True(result.Data.ContainsKey("importedat"));
 
-            var rows = result.Data["Rows"] as List<IDictionary<string, object>>;
+            var rows = result.Data["rows"] as List<IDictionary<string, object>>;
             Assert.NotNull(rows);
             Assert.Equal(2, rows.Count);
             Assert.Equal("Alice", rows[0]["Name"].ToString());

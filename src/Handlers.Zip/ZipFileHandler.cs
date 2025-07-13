@@ -7,7 +7,6 @@ namespace Handlers.Zip;
 
 public class ZipFileHandler : IFileFormatHandler
 {
-
     private static readonly string[] _extensions =
         [".zip", ".zipx", ".gz", ".gzip"];
 

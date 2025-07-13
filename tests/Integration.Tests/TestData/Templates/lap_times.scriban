@@ -1,4 +1,4 @@
-[{{ for row in Rows -}}
+[{{ for row in rows -}}
   {{ if for.index > 0 }},{{ end -}}
   {
     {{ for pair in row -}}
