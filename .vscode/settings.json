@@ -5,6 +5,7 @@
         "Dynastream",
         "fileformat",
         "handlertype",
+        "Hmmss",
         "importedat",
         "Mesg",
         "modifiedat",
@@ -12,6 +13,7 @@
         "recordcount",
         "rowcount",
         "Scriban",
+        "snupkg",
         "xunit",
         "zipx"
     ]

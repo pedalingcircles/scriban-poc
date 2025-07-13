@@ -6,6 +6,17 @@
     <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
 
+  <PropertyGroup Label="Development settings">
+    <!-- Enable analyzers in Debug builds -->
+    <RunAnalyzersDuringBuild Condition="'$(Configuration)' == 'Debug'">true</RunAnalyzersDuringBuild>
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+    
+    <!-- Optimize Release builds -->
+    <Optimize Condition="'$(Configuration)' == 'Release'">true</Optimize>
+    <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+  </PropertyGroup>
+
+
   <!-- https://learn.microsoft.com/en-us/dotnet/standard/assembly/set-attributes-project-file -->
   <!-- https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning -->
   <PropertyGroup Label="Central version management">
@@ -19,14 +30,32 @@
     <FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumber)</FileVersion>
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
 
-    <!-- Additional Version Properties -->
-    <InformationalVersion>$(Version)+$(SourceRevisionId)</InformationalVersion>
-    <RepositoryUrl>https://github.com/pedalingcircles/scriban-poc.git</RepositoryUrl>
-    
+    <!-- Let .NET automatically append SourceRevisionId -->
+    <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
+
+    <!-- Shorten Git hash if longer than 10 characters -->
+    <SourceRevisionId Condition="'$(SourceRevisionId)' != '' AND $([MSBuild]::GetStringLength('$(SourceRevisionId)')) > 10">$(SourceRevisionId.Substring(0, 7))</SourceRevisionId>
+
+    <!-- Fallback if not set (no Git, CI/CD, etc.) -->
+    <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">local-$([System.DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ'))</SourceRevisionId>
+
     <!-- Additional metadata -->
+    <Authors>Byvrate</Authors>
+    <Description>File processing library with support for CSV, GPX, FIT, and ZIP formats</Description>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <RepositoryUrl>https://github.com/pedalingcircles/scriban-poc.git</RepositoryUrl>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>file-processing;csv;gpx;fit;zip;templating</PackageTags>
     <Company>Byvrate</Company>
     <Product>FileProcessing</Product>
-    <Copyright>Copyright © Byvrate $([System.DateTime]::Now.Year)</Copyright>
+    <Copyright>Copyright © Byvrate $([System.DateTime]::UtcNow.Year)</Copyright>
+
+    <!-- Useful for library packages -->
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <EmbedUntrackedSources>true</EmbedUntrackedSources>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
 
 </Project>
