@@ -6,19 +6,6 @@
     <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
 
-  <PropertyGroup Label="Development settings">
-    <!-- Enable analyzers in Debug builds -->
-    <RunAnalyzersDuringBuild Condition="'$(Configuration)' == 'Debug'">true</RunAnalyzersDuringBuild>
-    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
-    
-    <!-- Optimize Release builds -->
-    <Optimize Condition="'$(Configuration)' == 'Release'">true</Optimize>
-    <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
-  </PropertyGroup>
-
-
-  <!-- https://learn.microsoft.com/en-us/dotnet/standard/assembly/set-attributes-project-file -->
-  <!-- https://learn.microsoft.com/en-us/dotnet/standard/library-guidance/versioning -->
   <PropertyGroup Label="Central version management">
     <MajorVersion>1</MajorVersion>
     <MinorVersion>0</MinorVersion>
@@ -30,32 +17,52 @@
     <FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumber)</FileVersion>
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
 
+    <!-- Enhanced source revision handling -->
+    <SourceRevisionId Condition="'$(SourceRevisionId)' != '' AND $([MSBuild]::GetStringLength('$(SourceRevisionId)')) > 10">$(SourceRevisionId.Substring(0, 7))</SourceRevisionId>
+    <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">local-$([System.DateTime]::UtcNow.ToString('yyyyMMddTHHmmZ'))</SourceRevisionId>
+    
     <!-- Let .NET automatically append SourceRevisionId -->
     <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
+  </PropertyGroup>
 
-    <!-- Shorten Git hash if longer than 10 characters -->
-    <SourceRevisionId Condition="'$(SourceRevisionId)' != '' AND $([MSBuild]::GetStringLength('$(SourceRevisionId)')) > 10">$(SourceRevisionId.Substring(0, 7))</SourceRevisionId>
-
-    <!-- Fallback if not set (no Git, CI/CD, etc.) -->
-    <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">local-$([System.DateTime]::UtcNow.ToString('yyyyMMddTHHmmssZ'))</SourceRevisionId>
-
-    <!-- Additional metadata -->
-    <Authors>Byvrate</Authors>
-    <Description>File processing library with support for CSV, GPX, FIT, and ZIP formats</Description>
-    <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/pedalingcircles/scriban-poc.git</RepositoryUrl>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>file-processing;csv;gpx;fit;zip;templating</PackageTags>
+  <PropertyGroup Label="Package metadata">
     <Company>Byvrate</Company>
     <Product>FileProcessing</Product>
+    <Authors>Byvrate</Authors>
+    <Description>File processing library with support for CSV, GPX, FIT, and ZIP formats with templating capabilities</Description>
     <Copyright>Copyright © Byvrate $([System.DateTime]::UtcNow.Year)</Copyright>
+    
+    <!-- Repository information -->
+    <RepositoryUrl>https://github.com/pedalingcircles/scriban-poc.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageProjectUrl>$(RepositoryUrl)</PackageProjectUrl>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageTags>file-processing;csv;gpx;fit;zip;templating;scriban;liquid</PackageTags>
+  </PropertyGroup>
 
-    <!-- Useful for library packages -->
+  <PropertyGroup Label="Build settings">
+    <!-- Documentation and symbols -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    
+    <!-- Build optimizations -->
+    <Optimize Condition="'$(Configuration)' == 'Release'">true</Optimize>
+    <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
+    <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
   </PropertyGroup>
+
+  <!-- Source Link for Release builds -->
+  <ItemGroup Condition="'$(Configuration)' == 'Release'">
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+  </ItemGroup>
+
+  <!-- Include README in packages -->
+  <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)README.md')">
+    <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
 
 </Project>

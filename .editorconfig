@@ -2,5 +2,9 @@
 root = true
 
 [*.cs]
-# Suppress IDE0130: Namespace does not match folder structure
+dotnet_style_namespace_match_folder = false
 dotnet_diagnostic.IDE0130.severity = none
+
+[*.{csproj,props,targets}]
+indent_style = space
+indent_size = 2
