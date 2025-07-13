@@ -3,12 +3,21 @@ using Core.Models;
 using Dynastream.Fit;
 using Handlers.Fit.Extensions;
 
+
 namespace Handlers.Fit;
 
 public class FitFileHandler : IFileFormatHandler
 {
     public bool CanHandle(FileInfo file)
-        => file.Extension.Equals(".fit", StringComparison.OrdinalIgnoreCase);
+            => file.Extension.Equals(".fit", StringComparison.OrdinalIgnoreCase)
+                && IsFitFile(file.FullName);
+    
+    private bool IsFitFile(string filePath)
+    {
+        using var stream = new FileStream(filePath, FileMode.Open, FileAccess.Read);
+        var decode = new Decode();
+        return decode.IsFIT(stream) && decode.CheckIntegrity(stream);
+    }
 
     public ParsedData Parse(FileInfo file)
     {
