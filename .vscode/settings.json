@@ -12,6 +12,7 @@
         "recordcount",
         "rowcount",
         "Scriban",
+        "xunit",
         "zipx"
     ]
 }

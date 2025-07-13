@@ -20,11 +20,6 @@ public class CsvFileHandler : IFileFormatHandler
                          .Cast<IDictionary<string, object>>()
                          .ToList();
 
-        // e.g. expose rows as a list of dictionaries
-        // parsed.Data["rows"]      = records;
-        // parsed.Data["rowcount"]  = records.Count;
-        // parsed.Data["filename"]  = file.Name;
-        // parsed.Data["timestamp-import"]= DateTime.UtcNow;
         var parsed = new ParsedData()
             .SetRows(records)
             .SetRowCount(records.Count)

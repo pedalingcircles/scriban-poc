@@ -1,6 +1,7 @@
 <Project>
 
   <PropertyGroup Label="Configure assembly names and namespaces">
+    <SolutionName Condition="'$(SolutionName)' == ''">Byvrate.FileProcessing</SolutionName>
     <AssemblyName>$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
