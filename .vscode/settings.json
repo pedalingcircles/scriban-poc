@@ -6,6 +6,7 @@
         "fileformat",
         "handlertype",
         "importedat",
+        "Mesg",
         "modifiedat",
         "parseduration",
         "recordcount",

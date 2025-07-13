@@ -55,9 +55,9 @@ namespace Handlers.Csv.Tests
             Assert.Equal("Bob", rows[1]["Name"].ToString());
             Assert.Equal("25", rows[1]["Age"].ToString());
 
-            Assert.Equal(2, (int)result.Data["RowCount"]);
-            Assert.Equal(file.Name, result.Data["FileName"]);
-            Assert.IsType<DateTime>(result.Data["ImportedAt"]);
+            Assert.Equal(2, (int)result.Data["rowcount"]);
+            Assert.Equal(file.Name, result.Data["filename"]);
+            Assert.IsType<DateTime>(result.Data["importedat"]);
 
             // Cleanup
             File.Delete(filePath);

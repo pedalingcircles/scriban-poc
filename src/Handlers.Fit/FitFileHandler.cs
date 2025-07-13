@@ -47,6 +47,9 @@ public class FitFileHandler : IFileFormatHandler
         ActivityParser activityParser = new ActivityParser(fitDecoder.FitMessages);
         var sessions = activityParser.ParseSessions();
 
+
+
+
         return parsed;
     }
 }
