@@ -52,3 +52,19 @@ CodeCoverage/
 *.VisualState.xml
 TestResult.xml
 nunit-*.xml
+
+# Scratch/Development files
+scratch/
+notes/
+snippets/
+temp/
+tmp/
+*.tmp
+*.temp
+*.scratch
+*.notes
+.notes/
+.scratch/
+TODO.md
+NOTES.md
+playground/
