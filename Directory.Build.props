@@ -49,6 +49,9 @@
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     
+    <!-- Warning suppressions -->
+    <NoWarn>CS1591;CS1587;CS1572</NoWarn> <!-- Missing XML comment for publicly visible type or member -->
+
     <!-- Build optimizations -->
     <Optimize Condition="'$(Configuration)' == 'Release'">true</Optimize>
     <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>

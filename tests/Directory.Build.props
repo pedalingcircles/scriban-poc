@@ -1,0 +1,8 @@
+<Project>
+  <PropertyGroup Label="Build settings">
+
+    <!-- Warning suppressions -->
+    <NoWarn>CS1591;CS1587;CS1572</NoWarn> <!-- Missing XML comment for publicly visible type or member -->
+
+  </PropertyGroup>
+</Project>
