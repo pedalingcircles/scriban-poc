@@ -13,10 +13,4 @@
     <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
     <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
-      <PrivateAssets>all</PrivateAssets>
-      <Version>3.7.115</Version>
-    </PackageReference>
-  </ItemGroup>
 </Project>
