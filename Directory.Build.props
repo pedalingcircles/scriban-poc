@@ -1,37 +1,30 @@
 <Project>
-
   <PropertyGroup Label="Configure assembly names and namespaces">
     <SolutionName Condition="'$(SolutionName)' == ''">Byvrate.FileProcessing</SolutionName>
     <AssemblyName>$(SolutionName).$(MSBuildProjectName)</AssemblyName>
     <RootNamespace>$(AssemblyName)</RootNamespace>
   </PropertyGroup>
-
   <PropertyGroup Label="Central version management">
     <MajorVersion>1</MajorVersion>
     <MinorVersion>0</MinorVersion>
     <PatchVersion>0</PatchVersion>
     <BuildNumber Condition="'$(BuildNumber)' == ''">0</BuildNumber>
-    
     <!-- Computed versions -->
     <AssemblyVersion>$(MajorVersion).$(MinorVersion).0.0</AssemblyVersion>
     <FileVersion>$(MajorVersion).$(MinorVersion).$(PatchVersion).$(BuildNumber)</FileVersion>
     <Version>$(MajorVersion).$(MinorVersion).$(PatchVersion)</Version>
-
     <!-- Enhanced source revision handling -->
-    <SourceRevisionId Condition="'$(SourceRevisionId)' != '' AND $([MSBuild]::GetStringLength('$(SourceRevisionId)')) > 10">$(SourceRevisionId.Substring(0, 7))</SourceRevisionId>
+    <SourceRevisionId Condition="'$(SourceRevisionId)' != '' AND $([MSBuild]::GetStringLength('$(SourceRevisionId)')) &gt; 10">$(SourceRevisionId.Substring(0, 7))</SourceRevisionId>
     <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">local-$([System.DateTime]::UtcNow.ToString('yyyyMMddTHHmmZ'))</SourceRevisionId>
-    
     <!-- Let .NET automatically append SourceRevisionId -->
     <IncludeSourceRevisionInInformationalVersion>true</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
-
   <PropertyGroup Label="Package metadata">
     <Company>Byvrate</Company>
     <Product>FileProcessing</Product>
     <Authors>Byvrate</Authors>
     <Description>File processing library with support for CSV, GPX, FIT, and ZIP formats with templating capabilities</Description>
     <Copyright>Copyright © Byvrate $([System.DateTime]::UtcNow.Year)</Copyright>
-    
     <!-- Repository information -->
     <RepositoryUrl>https://github.com/pedalingcircles/scriban-poc.git</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
@@ -40,7 +33,6 @@
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>file-processing;csv;gpx;fit;zip;templating;scriban;liquid</PackageTags>
   </PropertyGroup>
-
   <PropertyGroup Label="Build settings">
     <!-- Documentation and symbols -->
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -48,24 +40,26 @@
     <EmbedUntrackedSources>true</EmbedUntrackedSources>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
-    
     <!-- Warning suppressions -->
-    <NoWarn>CS1591;CS1587;CS1572</NoWarn> <!-- Missing XML comment for publicly visible type or member -->
-
+    <NoWarn>CS1591;CS1587;CS1572</NoWarn>
+    <!-- Missing XML comment for publicly visible type or member -->
     <!-- Build optimizations -->
     <Optimize Condition="'$(Configuration)' == 'Release'">true</Optimize>
     <TreatWarningsAsErrors Condition="'$(Configuration)' == 'Release'">true</TreatWarningsAsErrors>
     <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
   </PropertyGroup>
-
   <!-- Source Link for Release builds -->
   <ItemGroup Condition="'$(Configuration)' == 'Release'">
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All"/>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
   </ItemGroup>
-
   <!-- Include README in packages -->
   <ItemGroup Condition="Exists('$(MSBuildThisFileDirectory)README.md')">
     <None Include="$(MSBuildThisFileDirectory)README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
-
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" Condition="!Exists('packages.config')">
+      <PrivateAssets>all</PrivateAssets>
+      <Version>3.7.115</Version>
+    </PackageReference>
+  </ItemGroup>
 </Project>
