@@ -1,13 +1,36 @@
 using System.Reflection;
-using Core.Models; // Add this to reference a type from Core
+using Core.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Xunit.Abstractions;
 
 namespace Core.Services.Tests
 {
     public class ThisAssemblyTest
     {
+        private readonly ILogger<ThisAssemblyTest> _logger;
+
+        public ThisAssemblyTest(ITestOutputHelper output)
+        {
+            // Create a ServiceCollection, add logging, and hook into xUnit output
+            var services = new ServiceCollection()
+                .AddLogging(builder =>
+                {
+                    builder
+                    .AddFilter("Default", LogLevel.Debug)
+                    .AddXunit(output);
+                })
+                .BuildServiceProvider();
+
+            _logger = services
+                .GetRequiredService<ILogger<ThisAssemblyTest>>();
+        }
+
         [Fact]
         public void CheckCoreAssemblyName()
         {
+            _logger.LogDebug("Starting test at {Time}", DateTime.UtcNow);
+
             // Get the Core assembly through a known type from that assembly
             var coreAssembly = typeof(ParsedData).Assembly;
             var coreAssemblyName = coreAssembly.GetName().Name;
@@ -19,6 +42,8 @@ namespace Core.Services.Tests
             Assert.NotNull(coreAssemblyName);
             Assert.NotEmpty(coreAssemblyName);
             Assert.EndsWith(".Core", coreAssemblyName);
+
+            _logger.LogInformation("Completed test");
         }
 
         [Fact]
@@ -26,7 +51,7 @@ namespace Core.Services.Tests
         {
             // Get the Core assembly through a known public type
             var coreAssembly = typeof(ParsedData).Assembly;
-            
+
             // Get the ThisAssembly type from the Core assembly
             var thisAssemblyType = coreAssembly.GetType("ThisAssembly");
             Assert.NotNull(thisAssemblyType);
@@ -37,6 +62,7 @@ namespace Core.Services.Tests
 
             // Get the value
             var version = versionField.GetValue(null) as string;
+            _logger.LogInformation("AssemblyVersion: {Version}", version);
 
             // Assert
             Assert.NotNull(version);
