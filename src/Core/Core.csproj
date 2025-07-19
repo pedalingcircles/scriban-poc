@@ -4,7 +4,4 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-  <ItemGroup>
-    <InternalsVisibleTo Include="Byvrate.FileProcessing.Core.Tests" />
-  </ItemGroup>
 </Project>
