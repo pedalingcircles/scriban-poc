@@ -70,5 +70,25 @@ namespace Core.Services.Tests
             // Should be in format "major.minor.patch.build" (e.g., "1.0.0.0")
             Assert.Matches(@"^\d+\.\d+\.\d+\.\d+$", version);
         }
+
+        [Fact]
+        public void AssemblyFileVersion_ShouldFollowFourPartVersionFormat()
+        {
+            var coreAssembly = typeof(ParsedData).Assembly;
+            var thisAssemblyType = coreAssembly.GetType("ThisAssembly");
+            Assert.NotNull(thisAssemblyType);
+
+            var versionField = thisAssemblyType.GetField("AssemblyFileVersion", BindingFlags.Static | BindingFlags.NonPublic);
+            Assert.NotNull(versionField);
+
+            var fileVersion = versionField.GetValue(null) as string;
+            _logger.LogInformation("AssemblyFileVersion: {FileVersion}", fileVersion);
+
+            Assert.NotNull(fileVersion);
+            Assert.NotEmpty(fileVersion);
+            // Should be in format "major.minor.patch.revision" (e.g., "1.0.24.15136")
+            Assert.Matches(@"^\d+\.\d+\.\d+\.\d+$", fileVersion);
+        }
+
     }
 }
