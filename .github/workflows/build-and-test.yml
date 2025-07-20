@@ -50,3 +50,4 @@ jobs:
           !src/**/bin/${{ matrix.configuration }}/**/ref/**
           !src/**/bin/${{ matrix.configuration }}/**/*.pdb
         retention-days: 5
+        
