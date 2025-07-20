@@ -35,16 +35,6 @@ alias dtest='dotnet test'
 alias dclean='dotnet clean'
 alias drestore='dotnet restore'
 
-# Kubernetes aliases
-alias k='kubectl'
-alias kgp='kubectl get pods'
-alias kgs='kubectl get services'
-alias kgd='kubectl get deployments'
-alias kgn='kubectl get nodes'
-alias kdp='kubectl describe pod'
-alias kds='kubectl describe service'
-alias kdd='kubectl describe deployment'
-
 # Azure aliases
 alias azlogin='az login'
 alias azaccount='az account list'
@@ -94,10 +84,7 @@ echo "✅ Verifying installations..."
 echo "📍 .NET SDK: $(dotnet --version)"
 echo "📍 Terraform: $(terraform --version | head -1)"
 echo "📍 Azure CLI: $(az --version | grep azure-cli | awk '{print $2}')"
-echo "📍 kubectl: $(kubectl version --client --short 2>/dev/null)"
-echo "📍 Helm: $(helm version --short)"
 
 echo "🎉 Development environment setup complete!"
 echo "💡 Run '~/netdiag' to test networking utilities"
 echo "💡 Available networking tools: ping, traceroute, netstat, ifconfig, ip, nslookup, tcpdump"
-echo "💡 Use aliases: k (kubectl), tf (terraform), d* (.NET commands)"

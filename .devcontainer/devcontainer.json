@@ -1,5 +1,5 @@
 {
-    "name": "Scriban POC Development",
+    "name": "POC Development",
     "dockerFile": "Dockerfile",
     "features": {
         "ghcr.io/devcontainers/features/dotnet:2": {
@@ -12,11 +12,7 @@
         "ghcr.io/devcontainers/features/azure-cli:1": {
             "version": "latest"
         },
-        "ghcr.io/devcontainers/features/kubectl-helm-minikube:1": {
-            "version": "latest",
-            "helm": "latest",
-            "minikube": "none"
-        },
+
         "ghcr.io/devcontainers/features/git:1": {
             "version": "latest"
         },
@@ -38,9 +34,7 @@
                 "ms-vscode.vscode-json",
                 "hashicorp.terraform",
                 "ms-vscode.azurecli",
-                "ms-kubernetes-tools.vscode-kubernetes-tools",
                 "ms-azuretools.vscode-azureresourcegroups",
-                "ms-azuretools.vscode-azurefunctions",
                 "redhat.vscode-yaml",
                 "github.vscode-github-actions",
                 "eamodio.gitlens",
