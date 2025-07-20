@@ -50,13 +50,3 @@ jobs:
           !src/**/bin/${{ matrix.configuration }}/**/ref/**
           !src/**/bin/${{ matrix.configuration }}/**/*.pdb
         retention-days: 5
-
-    - name: Upload NuGet packages (Release only)
-      if: matrix.configuration == 'Release'
-      uses: actions/upload-artifact@v4
-      with:
-        name: nuget-packages
-        path: |
-          src/**/bin/Release/**/*.nupkg
-          src/**/bin/Release/**/*.snupkg
-        retention-days: 90
