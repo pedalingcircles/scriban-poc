@@ -1,0 +1,56 @@
+{
+    "name": "POC Development",
+    "dockerFile": "Dockerfile",
+    "features": {
+        "ghcr.io/devcontainers/features/dotnet:2": {
+            "version": "9.0",
+            "additionalVersions": "8.0"
+        },
+        "ghcr.io/devcontainers/features/terraform:1": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/azure-cli:1": {
+            "version": "latest"
+        },
+
+        "ghcr.io/devcontainers/features/git:1": {
+            "version": "latest"
+        },
+        "ghcr.io/devcontainers/features/github-cli:1": {
+            "version": "latest"
+        }
+    },
+    "customizations": {
+        "vscode": {
+            "settings": {
+                "dotnet.defaultSolution": "Byvrate.FileProcessing.sln",
+                "omnisharp.defaultLaunchSolution": "Byvrate.FileProcessing.sln",
+                "terminal.integrated.defaultProfile.linux": "bash"
+            },
+            "extensions": [
+                "ms-dotnettools.csharp",
+                "ms-dotnettools.csdevkit",
+                "ms-dotnettools.vscode-dotnet-runtime",
+                "ms-vscode.vscode-json",
+                "hashicorp.terraform",
+                "ms-vscode.azurecli",
+                "ms-azuretools.vscode-azureresourcegroups",
+                "redhat.vscode-yaml",
+                "github.vscode-github-actions",
+                "eamodio.gitlens",
+                "ms-vscode.powershell"
+            ]
+        }
+    },
+    "forwardPorts": [5000, 5001, 8080],
+    "postCreateCommand": "bash .devcontainer/setup.sh",
+    "remoteUser": "vscode",
+    "mounts": [
+        "source=/var/run/docker.sock,target=/var/run/docker-host.sock,type=bind"
+    ],
+    "runArgs": [
+        "--privileged",
+        "--network=host"
+    ],
+    "workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}"
+}
