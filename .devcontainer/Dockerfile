@@ -31,13 +31,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         lsb-release \
     && apt-get autoremove -y && apt-get clean -y
 
-# Install PowerShell Core
-RUN curl -fsSL https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor -o /usr/share/keyrings/microsoft-prod.gpg \
-    && echo "deb [arch=amd64,arm64,armhf signed-by=/usr/share/keyrings/microsoft-prod.gpg] https://packages.microsoft.com/repos/microsoft-debian-bookworm-prod bookworm main" > /etc/apt/sources.list.d/microsoft-prod.list \
-    && apt-get update \
-    && apt-get install -y powershell \
-    && apt-get autoremove -y && apt-get clean -y
-
 # Install Terraform Language Server
 RUN curl -fsSL https://releases.hashicorp.com/terraform-ls/0.32.7/terraform-ls_0.32.7_linux_amd64.zip -o terraform-ls.zip \
     && unzip terraform-ls.zip \

@@ -168,7 +168,7 @@ EOF
 
 # Wait for emulators to be ready
 echo "⏳ Waiting for Azure emulators to start..."
-sleep 10
+sleep 20
 
 # Check emulator status
 ~/emulator-status
