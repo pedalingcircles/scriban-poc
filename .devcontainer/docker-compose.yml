@@ -9,11 +9,11 @@ services:
       - ../..:/workspaces:cached
       - /var/run/docker.sock:/var/run/docker-host.sock
     command: sleep infinity
-    network_mode: service:azure-emulators
+    network_mode: service:servicebus-emulator
     depends_on:
-      - azure-emulators
+      - servicebus-emulator
 
-  azure-emulators:
+  servicebus-emulator:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
     environment:
       # Service Bus Emulator Configuration
