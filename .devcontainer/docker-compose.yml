@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ../..:/workspaces:cached
+      - /var/run/docker.sock:/var/run/docker-host.sock
+    command: sleep infinity
+    network_mode: service:azure-emulators
+    depends_on:
+      - azure-emulators
+
+  azure-emulators:
+    image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    environment:
+      # Service Bus Emulator Configuration
+      - ACCEPT_EULA=Y
+      - SERVICEBUS_EMULATOR_CONFIG_PATH=/ServiceBus_Emulator/ConfigFiles/Config.json
+    ports:
+      # Service Bus Emulator ports
+      - "5672:5672"   # AMQP
+      - "5671:5671"   # AMQP SSL
+      - "15672:15672" # Management UI
+    volumes:
+      - servicebus-data:/tmp/servicebus
+      - ./emulator-config:/ServiceBus_Emulator/ConfigFiles
+    networks:
+      - azure-emulator-network
+
+  eventhub-emulator:
+    image: mcr.microsoft.com/azure-messaging/eventhubs-emulator:latest
+    environment:
+      # Event Hub Emulator Configuration
+      - ACCEPT_EULA=Y
+      - BLOB_SERVER=azurite
+      - METADATA_SERVER=azurite
+    ports:
+      - "9093:9093"  # Kafka protocol
+      - "8080:8080"  # Management endpoint
+    depends_on:
+      - azurite
+    networks:
+      - azure-emulator-network
+
+  azurite:
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --tableHost 0.0.0.0 --tablePort 10002"
+    ports:
+      - "10000:10000" # Blob service
+      - "10001:10001" # Queue service  
+      - "10002:10002" # Table service
+    volumes:
+      - azurite-data:/data
+    networks:
+      - azure-emulator-network
+
+volumes:
+  servicebus-data:
+  azurite-data:
+
+networks:
+  azure-emulator-network:
+    driver: bridge
