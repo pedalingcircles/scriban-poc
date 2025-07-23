@@ -1,17 +1,21 @@
 version: '3.8'
 
 services:
-  app:
+  dev:
     build:
       context: .
       dockerfile: Dockerfile
     volumes:
       - ../..:/workspaces:cached
       - /var/run/docker.sock:/var/run/docker-host.sock
+      - ~/.gitconfig:/home/vscode/.gitconfig:ro
     command: sleep infinity
-    network_mode: service:servicebus-emulator
+    networks:
+      - azure-emulator-network
     depends_on:
       - servicebus-emulator
+      - eventhub-emulator
+      - azurite
 
   servicebus-emulator:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
@@ -27,6 +31,7 @@ services:
     volumes:
       - servicebus-data:/tmp/servicebus
       - ./emulator-config:/ServiceBus_Emulator/ConfigFiles
+
     networks:
       - azure-emulator-network
 

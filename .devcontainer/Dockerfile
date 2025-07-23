@@ -53,30 +53,4 @@ RUN dotnet tool install --global dotnet-ef \
 # Ensure tools are in PATH
 ENV PATH="${PATH}:/home/vscode/.dotnet/tools"
 
-# Set up PowerShell profile and modules for vscode user
-USER vscode
-RUN pwsh -Command "Install-Module -Name Az -Force -AllowClobber -Scope CurrentUser" \
-    && pwsh -Command "Install-Module -Name Microsoft.PowerShell.PSResourceGet -Force -Scope CurrentUser" \
-    && pwsh -Command "Install-Module -Name PSReadLine -Force -Scope CurrentUser"
-
-# Create PowerShell profile with useful aliases
-RUN mkdir -p ~/.config/powershell \
-    && echo '# PowerShell Profile for Development' > ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-PSReadLineOption -PredictionSource History' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-PSReadLineOption -EditMode Emacs' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo '' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo '# Aliases for .NET development' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-Alias -Name drun -Value "dotnet run"' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-Alias -Name dbuild -Value "dotnet build"' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-Alias -Name dtest -Value "dotnet test"' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-Alias -Name dclean -Value "dotnet clean"' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-Alias -Name drestore -Value "dotnet restore"' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo '' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo '# Kubernetes aliases' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'Set-Alias -Name k -Value kubectl' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo '' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo '# Functions' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'function Get-DotNetInfo { dotnet --info }' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1 \
-    && echo 'function Get-KubePods { kubectl get pods }' >> ~/.config/powershell/Microsoft.PowerShell_profile.ps1
-
 USER vscode
