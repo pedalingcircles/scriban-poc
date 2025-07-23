@@ -59,9 +59,9 @@ alias gb='git branch'
 alias gco='git checkout'
 
 # Azure Emulator aliases
-alias sb-status='curl -s http://localhost:15672/api/overview | jq .'
-alias eh-status='curl -s http://localhost:8080/v1/metadata'
-alias azurite-status='curl -s http://localhost:10000/'
+alias sb-status='curl -s http://servicebus-emulator:15672/api/overview | jq .'
+alias eh-status='curl -s http://eventhub-emulator:8080/v1/metadata'
+alias azurite-status='curl -s http://azurite:10000/'
 EOF
 
 # Set up networking test script
@@ -92,36 +92,37 @@ echo "=== Azure Emulator Status ==="
 echo
 
 echo "🔍 Service Bus Emulator:"
-if curl -s http://localhost:15672/api/overview >/dev/null 2>&1; then
-    echo "  ✅ Running - Management UI: http://localhost:15672"
-    echo "  📊 Connection String: Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+if curl -s http://servicebus-emulator:15672/api/overview >/dev/null 2>&1; then
+    echo "  ✅ Running - Management UI: http://localhost:15672 (host) / http://servicebus-emulator:15672 (container)"
+    echo "  📊 Connection String: Endpoint=sb://servicebus-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
 else
     echo "  ❌ Not running"
 fi
 echo
 
 echo "🔍 Event Hub Emulator:"
-if curl -s http://localhost:8080/v1/metadata >/dev/null 2>&1; then
-    echo "  ✅ Running - Kafka endpoint: localhost:9093"
-    echo "  📊 Connection String: Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+if curl -s http://eventhub-emulator:8080/v1/metadata >/dev/null 2>&1; then
+    echo "  ✅ Running - Kafka endpoint: eventhub-emulator:9093"
+    echo "  📊 Connection String: Endpoint=sb://eventhub-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
 else
     echo "  ❌ Not running"
 fi
 echo
 
 echo "🔍 Azurite (Storage Emulator):"
-if curl -s http://localhost:10000/ >/dev/null 2>&1; then
+if curl -s http://azurite:10000/ >/dev/null 2>&1; then
     echo "  ✅ Running"
-    echo "  📊 Blob: http://localhost:10000"
-    echo "  📊 Queue: http://localhost:10001"
-    echo "  📊 Table: http://localhost:10002"
-    echo "  📊 Connection String: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://localhost:10000/devstoreaccount1;QueueEndpoint=http://localhost:10001/devstoreaccount1;TableEndpoint=http://localhost:10002/devstoreaccount1;"
+    echo "  📊 Blob: http://localhost:10000 (host) / http://azurite:10000 (container)"
+    echo "  📊 Queue: http://localhost:10001 (host) / http://azurite:10001 (container)"
+    echo "  📊 Table: http://localhost:10002 (host) / http://azurite:10002 (container)"
+    echo "  📊 Container Connection String: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
 else
     echo "  ❌ Not running"
 fi
 echo
 
 echo "💡 Use 'sb-status', 'eh-status', or 'azurite-status' for individual service checks"
+echo "💡 From host machine use localhost:PORT, from container use SERVICE-NAME:PORT"
 EOF
 chmod +x ~/emulator-status
 
@@ -158,9 +159,9 @@ DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02x
 ```json
 {
   "ConnectionStrings": {
-    "ServiceBus": "Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;",
-    "EventHub": "Endpoint=sb://localhost;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;",
-    "Storage": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://localhost:10000/devstoreaccount1;QueueEndpoint=http://localhost:10001/devstoreaccount1;TableEndpoint=http://localhost:10002/devstoreaccount1;"
+    "ServiceBus": "Endpoint=sb://servicebus-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;",
+    "EventHub": "Endpoint=sb://eventhub-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;",
+    "Storage": "DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
   }
 }
 ```
