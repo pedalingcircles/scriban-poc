@@ -53,6 +53,32 @@ CodeCoverage/
 TestResult.xml
 nunit-*.xml
 
+# Environment variables and secrets - deny by default
+.env
+.env.local
+.env.*.local
+.env.development
+.env.staging  
+.env.production
+
+# But allow template/example files
+!.env.example
+!.env.template
+!.env.sample
+!.env.defaults
+!.env.*.example
+!.env.*.template
+!.env.*.sample
+!.env.schema
+!.env.test
+!.env.ci
+
+# Development container secrets
+.devcontainer/.env
+.devcontainer/.env.*
+.devcontainer/secrets/
+
+
 # Scratch/Development files
 scratch/
 notes/
