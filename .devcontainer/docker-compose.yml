@@ -15,6 +15,27 @@ services:
       - servicebus-emulator
       - eventhub-emulator
       - azurite
+      - sqlserver
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    networks:
+      - azure-emulator-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q \"SELECT 1\""] # <--- Corrected line
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   servicebus-emulator:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
@@ -22,6 +43,11 @@ services:
       # Service Bus Emulator Configuration
       - ACCEPT_EULA=Y
       - SERVICEBUS_EMULATOR_CONFIG_PATH=/ServiceBus_Emulator/ConfigFiles/Config.json
+      # SQL Server connection configuration
+      - SqlServer__Server=sqlserver
+      - SqlServer__Database=ServiceBusEmulatorDB
+      - SqlServer__Username=sa
+      - SqlServer__Password=YourStrong@Passw0rd
     ports:
       # Service Bus Emulator ports
       - "5672:5672"   # AMQP
@@ -30,7 +56,8 @@ services:
     volumes:
       - servicebus-data:/tmp/servicebus
       - ./emulator-config:/ServiceBus_Emulator/ConfigFiles
-
+    depends_on:
+      - sqlserver
     networks:
       - azure-emulator-network
 
@@ -64,6 +91,7 @@ services:
 volumes:
   servicebus-data:
   azurite-data:
+  sqlserver-data:
 
 networks:
   azure-emulator-network:
