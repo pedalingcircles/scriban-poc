@@ -15,6 +15,7 @@ services:
       - servicebus-emulator
       - eventhub-emulator
       - azurite
+      - sqlserver
 
   sqlserver:
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -25,6 +26,8 @@ services:
       - MSSQL_PID=Developer
     ports:
       - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
     networks:
       - azure-emulator-network
 
@@ -34,6 +37,11 @@ services:
       # Service Bus Emulator Configuration
       - ACCEPT_EULA=Y
       - SERVICEBUS_EMULATOR_CONFIG_PATH=/ServiceBus_Emulator/ConfigFiles/Config.json
+      # SQL Server connection configuration
+      - SqlServer__Server=sqlserver
+      - SqlServer__Database=ServiceBusEmulatorDB
+      - SqlServer__Username=sa
+      - SqlServer__Password=YourStrong@Passw0rd
     ports:
       # Service Bus Emulator ports
       - "5672:5672"   # AMQP
@@ -77,6 +85,7 @@ services:
 volumes:
   servicebus-data:
   azurite-data:
+  sqlserver-data:
 
 networks:
   azure-emulator-network:
