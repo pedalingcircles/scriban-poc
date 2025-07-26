@@ -30,6 +30,12 @@ services:
       - sqlserver-data:/var/opt/mssql
     networks:
       - azure-emulator-network
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q \"SELECT 1\""] # <--- Corrected line
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   servicebus-emulator:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
