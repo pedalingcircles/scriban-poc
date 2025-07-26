@@ -78,6 +78,10 @@ nunit-*.xml
 .devcontainer/.env.*
 .devcontainer/secrets/
 
+# But allow devcontainer template files
+!.devcontainer/.env.example
+!.devcontainer/.env.template
+!.devcontainer/.env.sample
 
 # Scratch/Development files
 scratch/
