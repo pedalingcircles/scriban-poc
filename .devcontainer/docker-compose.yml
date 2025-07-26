@@ -16,6 +16,18 @@ services:
       - eventhub-emulator
       - azurite
 
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    platform: linux/amd64
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=YourStrong@Passw0rd
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    networks:
+      - azure-emulator-network
+
   servicebus-emulator:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
     environment:
@@ -30,7 +42,8 @@ services:
     volumes:
       - servicebus-data:/tmp/servicebus
       - ./emulator-config:/ServiceBus_Emulator/ConfigFiles
-
+    depends_on:
+      - sqlserver
     networks:
       - azure-emulator-network
 
