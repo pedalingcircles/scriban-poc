@@ -10,11 +10,33 @@ sudo apt-get update
 echo "📦 Restoring .NET packages..."
 dotnet restore
 
-# Set up git (if not already configured)
+# Set up git configuration
+echo "🔧 Configuring Git..."
 if [ -z "$(git config --global user.name)" ]; then
-    echo "⚠️  Please configure git:"
-    echo "git config --global user.name 'Your Name'"
-    echo "git config --global user.email 'your.email@example.com'"
+    if [ -n "$GIT_USER_NAME" ] && [ -n "$GIT_USER_EMAIL" ]; then
+        echo "  ✅ Setting Git config from environment variables"
+        git config --global user.name "$GIT_USER_NAME"
+        git config --global user.email "$GIT_USER_EMAIL"
+        
+        # Optional additional Git configurations
+        if [ -n "$GIT_DEFAULT_BRANCH" ]; then
+            git config --global init.defaultBranch "$GIT_DEFAULT_BRANCH"
+        fi
+        
+        if [ -n "$GIT_EDITOR" ]; then
+            git config --global core.editor "$GIT_EDITOR"
+        fi
+        
+        # Set some sensible defaults
+        git config --global pull.rebase false
+        git config --global init.defaultBranch main
+        git config --global core.autocrlf input
+        
+    else
+        echo "⚠️  Git not configured. Please create .devcontainer/.env (see README.md)"
+    fi
+else
+    echo "  ✅ Git already configured as: $(git config --global user.name) <$(git config --global user.email)>"
 fi
 
 # Create useful aliases
