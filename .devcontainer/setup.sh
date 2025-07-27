@@ -123,9 +123,9 @@ alias dkrm='docker rm'
 alias dkrmi='docker rmi'
 
 # Azure Emulator aliases
-alias sb-status='curl -s http://servicebus-emulator:15672/api/overview | jq .'
-alias eh-status='curl -s http://eventhub-emulator:8080/v1/metadata'
-alias azurite-status='curl -s http://azurite:10000/'
+alias sb-status='echo "Service Bus Status:" && (nc -z servicebus-emulator 5672 2>/dev/null && echo "  AMQP (5672): ✅" || echo "  AMQP (5672): ❌") && (nc -z servicebus-emulator 5300 2>/dev/null && echo "  Management (5300): ✅" || echo "  Management (5300): ❌")'
+alias eh-status='echo "Event Hub Status:" && (nc -z eventhub-emulator 9092 2>/dev/null && echo "  Kafka (9092): ✅" || echo "  Kafka (9092): ❌") && (nc -z eventhub-emulator 5672 2>/dev/null && echo "  AMQP (5672): ✅" || echo "  AMQP (5672): ❌")'
+alias azurite-status='echo "Azurite Status:" && (nc -z azurite 10000 2>/dev/null && echo "  Blob (10000): ✅" || echo "  Blob (10000): ❌") && (nc -z azurite 10001 2>/dev/null && echo "  Queue (10001): ✅" || echo "  Queue (10001): ❌")'
 alias emulator-status='~/emulator-status'
 
 # Utility aliases
@@ -303,38 +303,64 @@ cat > ~/emulator-status << 'EOF'
 echo "=== Azure Emulator Status ==="
 echo
 
-echo "🔍 Service Bus Emulator:"
-if curl -s http://servicebus-emulator:15672/api/overview >/dev/null 2>&1; then
-    echo "  ✅ Running - Management UI: http://localhost:15672 (host) / http://servicebus-emulator:15672 (container)"
-    echo "  📊 Connection String: Endpoint=sb://servicebus-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+echo "🔍 SQL Server (Service Bus Dependency):"
+if nc -z sqlserver 1433 2>/dev/null; then
+    echo "  ✅ Running - Port 1433 accessible"
 else
-    echo "  ❌ Not running"
+    echo "  ❌ Not accessible on port 1433"
+fi
+echo
+
+echo "🔍 Service Bus Emulator:"
+if nc -z servicebus-emulator 5672 2>/dev/null; then
+    echo "  ✅ Running - AMQP port accessible"
+    echo "  📊 AMQP Endpoint: servicebus-emulator:5672"
+    echo "  📊 Connection String: Endpoint=sb://servicebus-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
+    
+    if nc -z servicebus-emulator 5300 2>/dev/null; then
+        echo "  📊 Management UI: http://localhost:5300 (host) / http://servicebus-emulator:5300 (container)"
+    fi
+else
+    echo "  ❌ AMQP port (5672) not accessible"
+    echo "  💡 Service Bus emulator may still be starting up or have SQL Server connectivity issues"
 fi
 echo
 
 echo "🔍 Event Hub Emulator:"
-if curl -s http://eventhub-emulator:8080/v1/metadata >/dev/null 2>&1; then
-    echo "  ✅ Running - Kafka endpoint: eventhub-emulator:9093"
+if nc -z eventhub-emulator 9092 2>/dev/null; then
+    echo "  ✅ Running - Kafka port accessible"
+    echo "  📊 Kafka Endpoint: eventhub-emulator:9092"
+    
+    if nc -z eventhub-emulator 5672 2>/dev/null; then
+        echo "  📊 AMQP Endpoint: eventhub-emulator:5672 (port 5673 on host)"
+    fi
+    
+    if nc -z eventhub-emulator 5300 2>/dev/null; then
+        echo "  📊 Management: eventhub-emulator:5300 (port 5301 on host)"
+    fi
+    
     echo "  📊 Connection String: Endpoint=sb://eventhub-emulator;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=SAS_KEY_VALUE;UseDevelopmentEmulator=true;"
 else
-    echo "  ❌ Not running"
+    echo "  ❌ Kafka port (9092) not accessible"
+    echo "  💡 Event Hub emulator may still be starting up or have Azurite dependency issues"
 fi
 echo
 
 echo "🔍 Azurite (Storage Emulator):"
-if curl -s http://azurite:10000/ >/dev/null 2>&1; then
-    echo "  ✅ Running"
+if nc -z azurite 10000 2>/dev/null; then
+    echo "  ✅ Running - Blob service accessible"
     echo "  📊 Blob: http://localhost:10000 (host) / http://azurite:10000 (container)"
     echo "  📊 Queue: http://localhost:10001 (host) / http://azurite:10001 (container)"
     echo "  📊 Table: http://localhost:10002 (host) / http://azurite:10002 (container)"
     echo "  📊 Container Connection String: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=Eby8vdM02xNOcqFlqUwJPLlmEtlCDXJ1OUzFT50uSRZ6IFsuFq2UVErCz4I6tq/K1SZFPTOtr/KBHBeksoGMGw==;BlobEndpoint=http://azurite:10000/devstoreaccount1;QueueEndpoint=http://azurite:10001/devstoreaccount1;TableEndpoint=http://azurite:10002/devstoreaccount1;"
 else
-    echo "  ❌ Not running"
+    echo "  ❌ Blob service port (10000) not accessible"
 fi
 echo
 
 echo "💡 Use 'sb-status', 'eh-status', or 'azurite-status' for individual service checks"
 echo "💡 From host machine use localhost:PORT, from container use SERVICE-NAME:PORT"
+echo "💡 Service Bus depends on SQL Server, Event Hub depends on Azurite"
 EOF
 chmod +x ~/emulator-status
 
