@@ -22,7 +22,7 @@ services:
     platform: linux/amd64
     environment:
       - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
       - MSSQL_PID=Developer
     ports:
       - "1433:1433"
@@ -31,7 +31,7 @@ services:
     networks:
       - azure-emulator-network
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q \"SELECT 1\""] # <--- Corrected line
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q \"SELECT 1\""] # <--- Corrected line
       interval: 10s
       timeout: 5s
       retries: 10
@@ -47,7 +47,7 @@ services:
       - SqlServer__Server=sqlserver
       - SqlServer__Database=ServiceBusEmulatorDB
       - SqlServer__Username=sa
-      - SqlServer__Password=YourStrong@Passw0rd
+      - SqlServer__Password=${MSSQL_SA_PASSWORD}
     ports:
       - "5672:5672"  # AMQP protocol
       - "5300:5300"  # Management endpoint
@@ -63,7 +63,7 @@ services:
     image: mcr.microsoft.com/azure-messaging/eventhubs-emulator:latest
     pull_policy: always
     volumes:
-      - "./eventhub-config:/Eventhubs_Emulator/ConfigFiles"
+      - "${EVENTHUB_CONFIG_PATH}:/Eventhubs_Emulator/ConfigFiles/Config.json"
     environment:
       # Event Hub Emulator Configuration
       - ACCEPT_EULA=Y
