@@ -1,5 +1,9 @@
 name: Build and Test
 
+run-name: Build - 1.2.0
+
+
+
 on:
   push:
     branches: [ main, develop ]
