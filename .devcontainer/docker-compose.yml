@@ -18,65 +18,70 @@ services:
       - sqlserver
 
   sqlserver:
+    container_name: "sqlserver"
     image: mcr.microsoft.com/mssql/server:2022-latest
     platform: linux/amd64
     environment:
-      - ACCEPT_EULA=Y
-      - SA_PASSWORD=YourStrong@Passw0rd
-      - MSSQL_PID=Developer
+      - ACCEPT_EULA=${ACCEPT_EULA}
+      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
     ports:
       - "1433:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
     networks:
-      - azure-emulator-network
+      azure-emulator-network:
+        aliases:
+          - "sqlserver"
     healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P YourStrong@Passw0rd -Q \"SELECT 1\""] # <--- Corrected line
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q \"SELECT 1\""] # <--- Corrected line
       interval: 10s
       timeout: 5s
       retries: 10
       start_period: 30s
 
   servicebus-emulator:
+    container_name: "servicebus-emulator"
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
     environment:
-      # Service Bus Emulator Configuration
-      - ACCEPT_EULA=Y
-      - SERVICEBUS_EMULATOR_CONFIG_PATH=/ServiceBus_Emulator/ConfigFiles/Config.json
-      # SQL Server connection configuration
-      - SqlServer__Server=sqlserver
-      - SqlServer__Database=ServiceBusEmulatorDB
-      - SqlServer__Username=sa
-      - SqlServer__Password=YourStrong@Passw0rd
+      SQL_SERVER: sqlserver
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"  # Password should be same as what is set for SQL Edge  
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      SQL_WAIT_INTERVAL: ${SQL_WAIT_INTERVAL} # Optional: Time in seconds to wait for SQL to be ready (default is 15 seconds)
     ports:
-      # Service Bus Emulator ports
-      - "5672:5672"   # AMQP
-      - "5671:5671"   # AMQP SSL
-      - "15672:15672" # Management UI
+      - "5672:5672"  # AMQP protocol
+      - "5300:5300"  # Management endpoint
     volumes:
       - servicebus-data:/tmp/servicebus
-      - ./emulator-config:/ServiceBus_Emulator/ConfigFiles
+      - "${SERVICEBUS_CONFIG_PATH}:/ServiceBus_Emulator/ConfigFiles/Config.json"
     depends_on:
       - sqlserver
     networks:
-      - azure-emulator-network
+      azure-emulator-network:
+        aliases:
+          - "servicebus-emulator"
 
   eventhub-emulator:
+    container_name: "eventhub-emulator"
     image: mcr.microsoft.com/azure-messaging/eventhubs-emulator:latest
+    pull_policy: always
+    volumes:
+      - "${EVENTHUB_CONFIG_PATH}:/Eventhubs_Emulator/ConfigFiles/Config.json"
     environment:
       # Event Hub Emulator Configuration
       - ACCEPT_EULA=Y
       - BLOB_SERVER=azurite
       - METADATA_SERVER=azurite
     ports:
-      - "9093:9093"  # Kafka protocol
-      - "8080:8080"  # Management endpoint
+      - "5673:5672"  # AMQP protocol
+      - "9092:9092"  # Kafka protocol
+      - "5301:5300"  # Management endpoint
     depends_on:
       - azurite
     networks:
       - azure-emulator-network
 
   azurite:
+    container_name: "azurite"
     image: mcr.microsoft.com/azure-storage/azurite:latest
     command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --tableHost 0.0.0.0 --tablePort 10002"
     ports:
@@ -95,4 +100,3 @@ volumes:
 
 networks:
   azure-emulator-network:
-    driver: bridge
