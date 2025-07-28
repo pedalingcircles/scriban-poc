@@ -18,7 +18,7 @@ services:
       - sqlserver
 
   sqlserver:
-    container_name: "${PROJECT_NAME:-scriban-poc}-sqlserver"
+    container_name: "${CONTAINER_PREFIX}-sqlserver"
     image: mcr.microsoft.com/mssql/server:2022-latest
     platform: linux/amd64
     environment:
@@ -40,10 +40,10 @@ services:
       start_period: 30s
 
   servicebus-emulator:
-    container_name: "${PROJECT_NAME:-scriban-poc}-servicebus"
+    container_name: "${CONTAINER_PREFIX}-servicebus"
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
     environment:
-      SQL_SERVER: "${PROJECT_NAME:-scriban-poc}-sqlserver"
+      SQL_SERVER: "${CONTAINER_PREFIX}-sqlserver"
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
       ACCEPT_EULA: ${ACCEPT_EULA}
       SQL_WAIT_INTERVAL: ${SQL_WAIT_INTERVAL}
@@ -61,15 +61,15 @@ services:
           - "servicebus-emulator"
 
   eventhub-emulator:
-    container_name: "${PROJECT_NAME:-scriban-poc}-eventhub"
+    container_name: "${CONTAINER_PREFIX}-eventhub"
     image: mcr.microsoft.com/azure-messaging/eventhubs-emulator:latest
     pull_policy: always
     volumes:
       - "${EVENTHUB_CONFIG_PATH}:/Eventhubs_Emulator/ConfigFiles/Config.json"
     environment:
       - ACCEPT_EULA=Y
-      - BLOB_SERVER="${PROJECT_NAME:-scriban-poc}-azurite"
-      - METADATA_SERVER="${PROJECT_NAME:-scriban-poc}-azurite"
+      - BLOB_SERVER="${CONTAINER_PREFIX}-azurite"
+      - METADATA_SERVER="${CONTAINER_PREFIX}-azurite"
     ports:
       - "5673:5672"
       - "9092:9092"
@@ -80,7 +80,7 @@ services:
       - azure-emulator-network
 
   azurite:
-    container_name: "${PROJECT_NAME:-scriban-poc}-azurite"
+    container_name: "${CONTAINER_PREFIX}-azurite"
     image: mcr.microsoft.com/azure-storage/azurite:latest
     command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --tableHost 0.0.0.0 --tablePort 10002"
     ports:
