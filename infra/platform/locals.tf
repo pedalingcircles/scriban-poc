@@ -15,6 +15,9 @@ locals {
   affix_seed = jsonencode(local.seed_inputs)
   deterministic_affix      = substr(md5(local.affix_seed), 0, 4)
 
+  # Load Azure resource abbreviations from external YAML file
+  azure_resource_abbreviations = yamldecode(file("${path.module}/azure-resource-abbreviations.yaml"))
+
   allowed_environments = [
     "dev",  # The development environment
     "qa",   # The quality assurance environment
