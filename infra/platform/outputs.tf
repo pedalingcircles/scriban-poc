@@ -32,7 +32,7 @@ output "backend_config" {
 # Output the backend configuration as a formatted string for easy copy/paste
 output "backend_config_example" {
   description = "Example backend configuration block"
-  value = <<-EOT
+  value       = <<-EOT
     terraform {
       backend "azurerm" {
         resource_group_name  = "${azurerm_resource_group.bootstrap.name}"
