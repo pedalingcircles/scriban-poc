@@ -5,19 +5,19 @@ variable "location" {
 }
 
 variable "environment" {
-  description = "Environment name (dev, test, prod, sandbox, etc.)"
+  description = "Environment name"
   type        = string
   
   validation {
-    condition = can(regex("^[a-z0-9-]+$", var.environment))
-    error_message = "Environment must be lowercase alphanumeric with hyphens only."
+    condition = contains(local.allowed_environments, var.environment)
+    error_message = "Environment must be one of: ${join(", ", local.allowed_environments)}."
   }
 }
 
 variable "project_name" {
   description = "Project name for resource naming"
   type        = string
-  default     = "scriban-poc"
+  default     = "contoso"
   
   validation {
     condition = can(regex("^[a-z0-9-]+$", var.project_name))

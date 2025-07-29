@@ -5,18 +5,18 @@ resource "random_string" "suffix" {
   special = false
 }
 
-# Resource Group for bootstrap resources
-resource "azurerm_resource_group" "bootstrap" {
-  name     = local.resource_group_name
+# Resource Group for Terraform state
+resource "azurerm_resource_group" "tfstate" {
+  name     = "${local.azure_resource_abbreviations.resource_group}tfstate${local.allowed_environments["prd"]}${locals.affix}"
   location = var.location
   tags     = local.common_tags
 }
 
 # Storage Account for Terraform state
 resource "azurerm_storage_account" "tfstate" {
-  name                     = local.storage_account_name
-  resource_group_name      = azurerm_resource_group.bootstrap.name
-  location                 = azurerm_resource_group.bootstrap.location
+  name                     = "${local.azure_resource_abbreviations.storage_account}tfstate${local.allowed_environments["prd"]}${locals.affix}"
+  resource_group_name      = azurerm_resource_group.tfstate.name
+  location                 = azurerm_resource_group.tfstate.location
   account_tier             = "Standard"
   account_replication_type = "LRS"
   
