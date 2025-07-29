@@ -18,18 +18,18 @@ locals {
   # Load Azure resource abbreviations from external YAML file
   azure_resource_abbreviations = yamldecode(file("${path.module}/azure-resource-abbreviations.yaml"))
 
-  allowed_environments = [
-    "dev", # The development environment
-    "qa",  # The quality assurance environment
-    "tst", # The testing environment
-    "stg", # The staging environment
-    "prd", # The production environment
-    "sbx", # The sandbox environment
-    "eph"  # The ephemeral environment
-  ]
+  allowed_environments = {
+    dev = "dev" # The development environment
+    qa  = "qa"  # The quality assurance environment
+    tst = "tst" # The testing environment
+    stg = "stg" # The staging environment
+    prd = "prd" # The production environment
+    sbx = "sbx" # The sandbox environment
+    eph = "eph" # The ephemeral environment
+  }
 
   # Storage account name (must be globally unique, alphanumeric only, max 24 chars)
-  storage_account_name = replace("${local.azure_resource_abbreviations.storage_account}tfstate${local.allowed_environments["prd"]}${locals.deterministic_affix}", "-", "")
+  storage_account_name = replace("${local.azure_resource_abbreviations.storage_account}tfstate${local.allowed_environments["prd"]}${local.deterministic_affix}", "-", "")
 
   # Resource group names
   tfstate_resource_group_name = "${local.azure_resource_abbreviations.resource_group}-tfstate-${local.allowed_environments["prd"]}"

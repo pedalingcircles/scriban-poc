@@ -7,14 +7,14 @@ resource "random_string" "suffix" {
 
 # Resource Group for Terraform state
 resource "azurerm_resource_group" "tfstate" {
-  name     = "${local.azure_resource_abbreviations.resource_group}tfstate${local.allowed_environments["prd"]}${locals.affix}"
+  name     = "${local.azure_resource_abbreviations.resource_group}-tfstate-${local.allowed_environments["prd"]}"
   location = var.location
   tags     = local.common_tags
 }
 
 # Storage Account for Terraform state
 resource "azurerm_storage_account" "tfstate" {
-  name                     = "${local.azure_resource_abbreviations.storage_account}tfstate${local.allowed_environments["prd"]}${locals.affix}"
+  name                     = "${local.azure_resource_abbreviations.storage_account}tfstate${local.allowed_environments["prd"]}${local.deterministic_affix}"
   resource_group_name      = azurerm_resource_group.tfstate.name
   location                 = azurerm_resource_group.tfstate.location
   account_tier             = "Standard"
@@ -24,6 +24,8 @@ resource "azurerm_storage_account" "tfstate" {
   min_tls_version                 = "TLS1_2"
   allow_nested_items_to_be_public = false
   public_network_access_enabled   = true # Can be restricted later
+  shared_access_key_enabled       = false  # This disables key-based auth
+  default_to_oauth_authentication = true   # This enables Entra ID by default
 
   # Enable features for state file management
   blob_properties {

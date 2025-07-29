@@ -23,4 +23,6 @@ provider "azurerm" {
       # No additional attributes are supported here
     }
   }
+  use_cli = true
+  storage_use_azuread             = true
 }

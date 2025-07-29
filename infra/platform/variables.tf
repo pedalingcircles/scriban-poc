@@ -9,8 +9,8 @@ variable "environment" {
   type        = string
 
   validation {
-    condition     = contains(local.allowed_environments, var.environment)
-    error_message = "Environment must be one of: ${join(", ", local.allowed_environments)}."
+    condition     = contains(keys(local.allowed_environments), var.environment)
+    error_message = "Environment must be one of: ${join(", ", keys(local.allowed_environments))}."
   }
 }
 

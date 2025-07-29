@@ -1,8 +1,26 @@
 #!/bin/bash
 set -euo pipefail
 
-# Bootstrap deployment script
 # This script handles the initial deployment of the storage account for Terraform state
+#
+# Tips:
+#   When running locally, login with the following...
+#   az login --tenant $TENANT_ID --use-device-code
+
+#   az account set --subscription $SUBSCRIPTION_ID
+#
+#   When authenticating and you receive a message indicating a hardware close mismatch (using WSL), try running the following...
+#   sudo hwclock -s
+#       and or
+#   sudo ntpdate time.windows.com
+#
+# The following environment variables should be set in order to run this script:
+#   APP_CONFIG_NAME     -> The name of the Azure App Config resource
+#   FF_FILE_PATH        -> The path to the JSON feature flags file to load into the Azure App Config resource
+#   EXPORT_PATH         -> The path where the exported feature flags will be saved
+#
+# To load from .env use:
+#   set -a; source .env; set +a
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV=${1:-dev}

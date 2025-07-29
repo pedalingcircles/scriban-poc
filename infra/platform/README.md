@@ -1,11 +1,11 @@
-# Bootstrap Infrastructure
+# Platform Infrastructure
 
-This directory contains the foundational Terraform configuration for setting up the storage account that will hold Terraform state files for all environments.
+This directory contains the foundational Terraform configuration for setting up the storage account that will hold Terraform state files for all environments as well as some networking.
 
 ## Purpose
 
-The bootstrap module creates:
-- Resource Group for bootstrap resources
+The platform module creates:
+- Resource Group for platform resources
 - Storage Account with versioning and soft delete
 - Multiple containers for different state file types:
   - `platform-tfstate`: Platform/hub resources
