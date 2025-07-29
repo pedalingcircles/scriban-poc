@@ -51,31 +51,4 @@ locals {
     # Sandbox environments
     sandbox = "sandbox-tfstate"
   }
-
-# https://learn.microsoft.com/en-us/azure/cloud-adoption-framework/ready/azure-best-practices/resource-abbreviations#storage
-  azure_resource_abbreviations = {
-    storage_account = "st"
-    resource_group  = "rg"
-    key_vault       = "kv"
-    app_service_plan     = "asp"
-    function_app    = "func"
-    virtual_machine = "vm"
-    vm_storage_account = "stvm"
-    web_app        = "app"
-    container_registry = "cr"
-    cosmos_db = "cosmos"
-    redis_cache = "redis"
-    sql_database_server = "sql"
-    sql_database = "sqldb"
-    application_insights = "appi"
-    log_analytics_workspace = "log"
-    event_hub_namespace = "evhns"
-    event_hub = "evh"
-    service_bus_namespace = "sbns"
-    service_bus_queue = "sbq"
-    service_bus_topic = "sbt"
-    service_bus_topic_subscription = "sbts"
-    event_hub = "evh"
-    event_grid_namespace = "evgns"
-  } 
 }
