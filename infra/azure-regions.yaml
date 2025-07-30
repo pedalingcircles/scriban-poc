@@ -1,0 +1,260 @@
+# Azure Regions mapping with standardized abbreviations
+# Source: az account list-locations
+
+eastus:
+  name: "eastus"
+  display_name: "East US"
+  regional_display_name: "(US) East US"
+  abbreviation: "eus"
+
+eastus2:
+  name: "eastus2"
+  display_name: "East US 2"
+  regional_display_name: "(US) East US 2"
+  abbreviation: "eus2"
+
+westus:
+  name: "westus"
+  display_name: "West US"
+  regional_display_name: "(US) West US"
+  abbreviation: "wus"
+
+westus2:
+  name: "westus2"
+  display_name: "West US 2"
+  regional_display_name: "(US) West US 2"
+  abbreviation: "wus2"
+
+westus3:
+  name: "westus3"
+  display_name: "West US 3"
+  regional_display_name: "(US) West US 3"
+  abbreviation: "wus3"
+
+centralus:
+  name: "centralus"
+  display_name: "Central US"
+  regional_display_name: "(US) Central US"
+  abbreviation: "cus"
+
+northcentralus:
+  name: "northcentralus"
+  display_name: "North Central US"
+  regional_display_name: "(US) North Central US"
+  abbreviation: "ncus"
+
+southcentralus:
+  name: "southcentralus"
+  display_name: "South Central US"
+  regional_display_name: "(US) South Central US"
+  abbreviation: "scus"
+
+northcentralusstage:
+  name: "northcentralusstage"
+  display_name: "North Central US (Stage)"
+  regional_display_name: "(US) North Central US (Stage)"
+  abbreviation: "ncusstg"
+
+westeurope:
+  name: "westeurope"
+  display_name: "West Europe"
+  regional_display_name: "(Europe) West Europe"
+  abbreviation: "weur"
+
+northeurope:
+  name: "northeurope"
+  display_name: "North Europe"
+  regional_display_name: "(Europe) North Europe"
+  abbreviation: "neur"
+
+uksouth:
+  name: "uksouth"
+  display_name: "UK South"
+  regional_display_name: "(Europe) UK South"
+  abbreviation: "uks"
+
+ukwest:
+  name: "ukwest"
+  display_name: "UK West"
+  regional_display_name: "(Europe) UK West"
+  abbreviation: "ukw"
+
+francecentral:
+  name: "francecentral"
+  display_name: "France Central"
+  regional_display_name: "(Europe) France Central"
+  abbreviation: "frc"
+
+francesouth:
+  name: "francesouth"
+  display_name: "France South"
+  regional_display_name: "(Europe) France South"
+  abbreviation: "frs"
+
+germanywestcentral:
+  name: "germanywestcentral"
+  display_name: "Germany West Central"
+  regional_display_name: "(Europe) Germany West Central"
+  abbreviation: "dewc"
+
+germanynorth:
+  name: "germanynorth"
+  display_name: "Germany North"
+  regional_display_name: "(Europe) Germany North"
+  abbreviation: "den"
+
+norwayeast:
+  name: "norwayeast"
+  display_name: "Norway East"
+  regional_display_name: "(Europe) Norway East"
+  abbreviation: "noe"
+
+norwaywest:
+  name: "norwaywest"
+  display_name: "Norway West"
+  regional_display_name: "(Europe) Norway West"
+  abbreviation: "now"
+
+swedencentral:
+  name: "swedencentral"
+  display_name: "Sweden Central"
+  regional_display_name: "(Europe) Sweden Central"
+  abbreviation: "sec"
+
+switzerlandnorth:
+  name: "switzerlandnorth"
+  display_name: "Switzerland North"
+  regional_display_name: "(Europe) Switzerland North"
+  abbreviation: "chn"
+
+switzerlandwest:
+  name: "switzerlandwest"
+  display_name: "Switzerland West"
+  regional_display_name: "(Europe) Switzerland West"
+  abbreviation: "chw"
+
+eastasia:
+  name: "eastasia"
+  display_name: "East Asia"
+  regional_display_name: "(Asia Pacific) East Asia"
+  abbreviation: "ea"
+
+southeastasia:
+  name: "southeastasia"
+  display_name: "Southeast Asia"
+  regional_display_name: "(Asia Pacific) Southeast Asia"
+  abbreviation: "sea"
+
+japaneast:
+  name: "japaneast"
+  display_name: "Japan East"
+  regional_display_name: "(Asia Pacific) Japan East"
+  abbreviation: "jpe"
+
+japanwest:
+  name: "japanwest"
+  display_name: "Japan West"
+  regional_display_name: "(Asia Pacific) Japan West"
+  abbreviation: "jpw"
+
+australiaeast:
+  name: "australiaeast"
+  display_name: "Australia East"
+  regional_display_name: "(Asia Pacific) Australia East"
+  abbreviation: "aue"
+
+australiasoutheast:
+  name: "australiasoutheast"
+  display_name: "Australia Southeast"
+  regional_display_name: "(Asia Pacific) Australia Southeast"
+  abbreviation: "ause"
+
+australiacentral:
+  name: "australiacentral"
+  display_name: "Australia Central"
+  regional_display_name: "(Asia Pacific) Australia Central"
+  abbreviation: "auc"
+
+australiacentral2:
+  name: "australiacentral2"
+  display_name: "Australia Central 2"
+  regional_display_name: "(Asia Pacific) Australia Central 2"
+  abbreviation: "auc2"
+
+koreacentral:
+  name: "koreacentral"
+  display_name: "Korea Central"
+  regional_display_name: "(Asia Pacific) Korea Central"
+  abbreviation: "krc"
+
+koreasouth:
+  name: "koreasouth"
+  display_name: "Korea South"
+  regional_display_name: "(Asia Pacific) Korea South"
+  abbreviation: "krs"
+
+southindia:
+  name: "southindia"
+  display_name: "South India"
+  regional_display_name: "(Asia Pacific) South India"
+  abbreviation: "ins"
+
+centralindia:
+  name: "centralindia"
+  display_name: "Central India"
+  regional_display_name: "(Asia Pacific) Central India"
+  abbreviation: "inc"
+
+westindia:
+  name: "westindia"
+  display_name: "West India"
+  regional_display_name: "(Asia Pacific) West India"
+  abbreviation: "inw"
+
+canadacentral:
+  name: "canadacentral"
+  display_name: "Canada Central"
+  regional_display_name: "(Canada) Canada Central"
+  abbreviation: "cac"
+
+canadaeast:
+  name: "canadaeast"
+  display_name: "Canada East"
+  regional_display_name: "(Canada) Canada East"
+  abbreviation: "cae"
+
+brazilsouth:
+  name: "brazilsouth"
+  display_name: "Brazil South"
+  regional_display_name: "(South America) Brazil South"
+  abbreviation: "brs"
+
+brazilsoutheast:
+  name: "brazilsoutheast"
+  display_name: "Brazil Southeast"
+  regional_display_name: "(South America) Brazil Southeast"
+  abbreviation: "brse"
+
+southafricanorth:
+  name: "southafricanorth"
+  display_name: "South Africa North"
+  regional_display_name: "(Africa) South Africa North"
+  abbreviation: "zan"
+
+southafricawest:
+  name: "southafricawest"
+  display_name: "South Africa West"
+  regional_display_name: "(Africa) South Africa West"
+  abbreviation: "zaw"
+
+uaenorth:
+  name: "uaenorth"
+  display_name: "UAE North"
+  regional_display_name: "(Middle East) UAE North"
+  abbreviation: "aen"
+
+uaecentral:
+  name: "uaecentral"
+  display_name: "UAE Central"
+  regional_display_name: "(Middle East) UAE Central"
+  abbreviation: "aec"

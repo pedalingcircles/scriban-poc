@@ -1,7 +1,7 @@
-variable "location" {
-  description = "Azure region for resources"
-  type        = string
-  default     = "East US 2"
+
+variable "regions" {
+  description = "List of Azure regions in order: [primary, secondary, ...replication regions]"
+  type        = list(string)
 }
 
 variable "environment" {

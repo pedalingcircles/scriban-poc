@@ -1,12 +1,39 @@
 locals {
 
+  # Load Azure regions data
+  azure_regions = yamldecode(file("${path.module}/../azure-regions.yaml"))
+
+  # Create region map with abbreviations
+  region_map = {
+    for region in var.regions :
+    region => {
+      name                     = region
+      display_name            = local.azure_regions[region].display_name
+      regional_display_name   = local.azure_regions[region].regional_display_name
+      abbreviation           = local.azure_regions[region].abbreviation
+    }
+  }
+
+  primary_region   = var.regions[0]
+  secondary_region = var.regions[1]
+  extra_regions    = slice(var.regions, 2, length(var.regions))  # all after index 1
+
+  # Resource group mapping with abbreviated region names
+  rg_map = {
+    for region in var.regions :
+    region => {
+      name     = "${var.project_name}-${local.azure_resource_abbreviations.resource_group}-${local.azure_regions[region].abbreviation}"
+      location = region
+    }
+  }
+
   # Combine multiple values for the seed. This is used to create a unique affix
   # value and acts like a deterministic value. This is used in resources that must have unique names
   # globally such as key vaults and storage accounts. Generally things that uses global DNS.
   seed_inputs = {
     project         = var.project_name
     environment     = var.environment
-    location        = var.location
+    location        = local.primary_region
     component       = "platform"
     subscription_id = data.azurerm_subscription.current.id
   }
@@ -16,7 +43,7 @@ locals {
   deterministic_affix = substr(md5(local.affix_seed), 0, 4)
 
   # Load Azure resource abbreviations from external YAML file
-  azure_resource_abbreviations = yamldecode(file("${path.module}/azure-resource-abbreviations.yaml"))
+  azure_resource_abbreviations = yamldecode(file("${path.module}/../azure-resource-abbreviations.yaml"))
 
   allowed_environments = {
     dev = "dev" # The development environment

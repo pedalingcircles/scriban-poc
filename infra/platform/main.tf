@@ -8,7 +8,7 @@ resource "random_string" "suffix" {
 # Resource Group for Terraform state
 resource "azurerm_resource_group" "tfstate" {
   name     = "${local.azure_resource_abbreviations.resource_group}-tfstate-${local.allowed_environments["prd"]}"
-  location = var.location
+  location = local.primary_region
   tags     = local.common_tags
 }
 
