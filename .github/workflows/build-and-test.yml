@@ -1,5 +1,9 @@
 name: Build and Test
 
+run-name: Build - 1.2.0
+
+
+
 on:
   push:
     branches: [ main, develop ]
@@ -27,7 +31,12 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0
+        fetch-depth: 0 # Crucial for GitVersion to analyze full history
+
+    - name: Install GitVersion
+      uses: gittools/actions/gitreleasemanager/setup@v4.0.1
+      with:
+        versionSpec: '5.x'
 
     - name: Patch version.json based on branch
       shell: bash

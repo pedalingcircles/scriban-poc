@@ -1,6 +1,6 @@
 terraform {
   required_version = ">= 1.5"
-  
+
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
@@ -18,9 +18,11 @@ provider "azurerm" {
     resource_group {
       prevent_deletion_if_contains_resources = false
     }
-    
+
     storage {
       # No additional attributes are supported here
     }
   }
+  use_cli = true
+  storage_use_azuread             = true
 }

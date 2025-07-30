@@ -9,8 +9,8 @@ output "storage_account_id" {
 }
 
 output "resource_group_name" {
-  description = "Name of the bootstrap resource group"
-  value       = azurerm_resource_group.bootstrap.name
+  description = "Name of the platform resource group"
+  value       = azurerm_resource_group.tfstate.name
 }
 
 output "state_containers" {
@@ -22,7 +22,7 @@ output "backend_config" {
   description = "Backend configuration for other Terraform modules"
   value = {
     storage_account_name = azurerm_storage_account.tfstate.name
-    resource_group_name  = azurerm_resource_group.bootstrap.name
+    resource_group_name  = azurerm_resource_group.tfstate.name
     containers = {
       for k, v in local.state_containers : k => v
     }
@@ -32,10 +32,10 @@ output "backend_config" {
 # Output the backend configuration as a formatted string for easy copy/paste
 output "backend_config_example" {
   description = "Example backend configuration block"
-  value = <<-EOT
+  value       = <<-EOT
     terraform {
       backend "azurerm" {
-        resource_group_name  = "${azurerm_resource_group.bootstrap.name}"
+        resource_group_name  = "${azurerm_resource_group.tfstate.name}"
         storage_account_name = "${azurerm_storage_account.tfstate.name}"
         container_name       = "platform-tfstate"  # or solutions-tfstate, ephemeral-tfstate, etc.
         key                  = "your-module/terraform.tfstate"
