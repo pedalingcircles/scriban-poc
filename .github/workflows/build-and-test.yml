@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: 'Prerelease tag for non‑main branches'
+        description: 'Prerelease tag for non-main branches'
         required: false
         default: 'alpha'
 
