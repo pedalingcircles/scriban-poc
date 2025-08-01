@@ -31,11 +31,6 @@ jobs:
       with:
         fetch-depth: 0 # Crucial for GitVersion to analyze full history
 
-    - name: Install GitVersion
-      uses: gittools/actions/gitreleasemanager/setup@v4.0.1
-      with:
-        versionSpec: '5.x'
-
     - name: Patch version.json based on branch
       shell: bash
       run: |
