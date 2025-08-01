@@ -29,7 +29,7 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0 # Crucial for GitVersion to analyze full history
+        fetch-depth: 0
 
     - name: Patch version.json based on branch
       shell: bash
