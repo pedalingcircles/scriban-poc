@@ -35,7 +35,25 @@ generate_etag() {
 # Function to generate timestamp
 generate_timestamp() {
     # Generate timestamp in the format: 2025-05-04T20:57:41.1892174Z
-    date -u +"%Y-%m-%dT%H:%M:%S.%7NZ" 2>/dev/null || date -u +"%Y-%m-%dT%H:%M:%S.$(shuf -i 1000000-9999999 -n 1)Z"
+    local base_time=$(date -u +"%Y-%m-%dT%H:%M:%S")
+    
+    # Generate random 7-digit number for microseconds
+    local rand1=$((RANDOM % 10))
+    local rand2=$((RANDOM % 10))
+    local rand3=$((RANDOM % 10))
+    local rand4=$((RANDOM % 10))
+    local rand5=$((RANDOM % 10))
+    local rand6=$((RANDOM % 10))
+    local rand7=$((RANDOM % 10))
+    
+    # Ensure first digit is not 0 (so we get 7 digits)
+    if [ $rand1 -eq 0 ]; then
+        rand1=1
+    fi
+    
+    local microseconds="${rand1}${rand2}${rand3}${rand4}${rand5}${rand6}${rand7}"
+    
+    echo "${base_time}.${microseconds}Z"
 }
 
 # Function to generate test for a single file
