@@ -1,6 +1,7 @@
 name: Build and Test
 
-run-name: Build - 1.2.0
+# Dynamic run name using GitVersion (will be updated after GitVersion runs)
+run-name: "Build ${{ github.run_number }} - ${{ github.ref_name }}"
 
 on:
   push:
@@ -10,17 +11,23 @@ on:
   workflow_dispatch:
     inputs:
       prerelease:
-        description: 'Prerelease tag for non-main branches'
+        description: 'Prerelease tag for non‑main branches'
         required: false
         default: 'alpha'
-
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     env:
-      # pick up the user‑supplied prerelease or fall back to "alpha"
       PRERELEASE: ${{ github.event.inputs.prerelease || 'alpha' }}
+    
+    outputs:
+      # Make version available to other jobs
+      version: ${{ steps.gitversion.outputs.fullSemVer }}
+      version-major: ${{ steps.gitversion.outputs.major }}
+      version-minor: ${{ steps.gitversion.outputs.minor }}
+      version-patch: ${{ steps.gitversion.outputs.patch }}
+      
     strategy:
       matrix:
         configuration: [Debug, Release]
@@ -31,30 +38,76 @@ jobs:
       with:
         fetch-depth: 0
 
-    - name: Patch version.json based on branch
-      shell: bash
-      run: |
-        # grab the version value, e.g. "1.3" or "1.3-foo-bar"
-        CURRENT=$(jq -r .version version.json)
-        # base is everything before the first hyphen
-        BASE=${CURRENT%%-*}
-
-        if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
-          echo "On main ⇒ stripping prerelease suffix: $CURRENT → $BASE"
-          jq --arg v "$BASE" '.version = $v' version.json > tmp && mv tmp version.json
-        else
-          NEWVER="$BASE-$PRERELEASE"
-          echo "Not on main ⇒ enforcing suffix: $CURRENT → $NEWVER"
-          jq --arg v "$NEWVER" '.version = $v' version.json > tmp && mv tmp version.json
-        fi
-
-    - name: Show patched version.json
-      run: cat version.json
-
     - name: Setup .NET
       uses: actions/setup-dotnet@v4
       with:
         global-json-file: global.json
+
+    # Install Nerdbank.GitVersioning tool
+    - name: Install GitVersion
+      run: dotnet tool install -g nbgv
+
+    # Generate version information
+    - name: Get Version
+      id: gitversion
+      run: |
+        # Get all version info from nbgv
+        echo "Getting version information..."
+        nbgv get-version --format json > version-info.json
+        cat version-info.json
+        
+        # Extract key values and set as outputs
+        FULL_VERSION=$(nbgv get-version --variable CloudBuildNumber)
+        SIMPLE_VERSION=$(nbgv get-version --variable SimpleVersion)
+        SEMVER_VERSION=$(nbgv get-version --variable SemVer2)
+        MAJOR=$(nbgv get-version --variable VersionMajor)
+        MINOR=$(nbgv get-version --variable VersionMinor)
+        PATCH=$(nbgv get-version --variable VersionRevision)
+        
+        echo "fullSemVer=$SEMVER_VERSION" >> $GITHUB_OUTPUT
+        echo "simpleVersion=$SIMPLE_VERSION" >> $GITHUB_OUTPUT
+        echo "cloudBuildNumber=$FULL_VERSION" >> $GITHUB_OUTPUT
+        echo "major=$MAJOR" >> $GITHUB_OUTPUT
+        echo "minor=$MINOR" >> $GITHUB_OUTPUT
+        echo "patch=$PATCH" >> $GITHUB_OUTPUT
+        
+        # Also set as environment variables for this job
+        echo "FULL_VERSION=$FULL_VERSION" >> $GITHUB_ENV
+        echo "SIMPLE_VERSION=$SIMPLE_VERSION" >> $GITHUB_ENV
+        echo "SEMVER_VERSION=$SEMVER_VERSION" >> $GITHUB_ENV
+
+    # Update the run name with the actual version
+    - name: Update Run Name
+      run: |
+        echo "::notice title=Version::Building version ${{ steps.gitversion.outputs.fullSemVer }}"
+
+    - name: Patch version.json based on branch
+      shell: bash
+      run: |
+        # Use the GitVersion-generated version instead of manual patching
+        GITVERSION_VERSION="${{ steps.gitversion.outputs.simpleVersion }}"
+        
+        if [[ "${GITHUB_REF}" == "refs/heads/main" ]]; then
+          echo "On main branch - using version: $GITVERSION_VERSION"
+          jq --arg v "$GITVERSION_VERSION" '.version = $v' version.json > tmp && mv tmp version.json
+        else
+          NEWVER="$GITVERSION_VERSION-$PRERELEASE"
+          echo "Not on main - using version: $NEWVER"
+          jq --arg v "$NEWVER" '.version = $v' version.json > tmp && mv tmp version.json
+        fi
+
+    - name: Show version information
+      run: |
+        echo "📋 Version Information:"
+        echo "  Full SemVer: ${{ steps.gitversion.outputs.fullSemVer }}"
+        echo "  Simple Version: ${{ steps.gitversion.outputs.simpleVersion }}"
+        echo "  Cloud Build Number: ${{ steps.gitversion.outputs.cloudBuildNumber }}"
+        echo "  Major: ${{ steps.gitversion.outputs.major }}"
+        echo "  Minor: ${{ steps.gitversion.outputs.minor }}"
+        echo "  Patch: ${{ steps.gitversion.outputs.patch }}"
+        echo ""
+        echo "📄 Final version.json:"
+        cat version.json
 
     - name: Restore dependencies
       run: dotnet restore
@@ -69,16 +122,27 @@ jobs:
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: test-results-${{ matrix.configuration }}
+        name: test-results-${{ matrix.configuration }}-v${{ steps.gitversion.outputs.simpleVersion }}
         path: TestResults/*.trx
 
     - name: Upload build artifacts
       uses: actions/upload-artifact@v4
       with:
-        name: build-artifacts-${{ matrix.configuration }}
+        name: build-artifacts-${{ matrix.configuration }}-v${{ steps.gitversion.outputs.simpleVersion }}
         path: |
           src/**/bin/${{ matrix.configuration }}/**
           !src/**/bin/${{ matrix.configuration }}/**/ref/**
           !src/**/bin/${{ matrix.configuration }}/**/*.pdb
         retention-days: 5
-        
+
+  # Example of using version in another job
+  package:
+    needs: build-and-test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Use version from previous job
+      run: |
+        echo "Creating package for version: ${{ needs.build-and-test.outputs.version }}"
+        echo "Major version: ${{ needs.build-and-test.outputs.version-major }}"
