@@ -226,6 +226,14 @@ EOF
     fi
 fi
 
+
+
+
+
+
+
+
+
 # Create PowerShell profile if PowerShell is available
 if command -v pwsh >/dev/null 2>&1; then
     echo "💙 Setting up PowerShell aliases..."
@@ -274,6 +282,79 @@ Write-Host "🚀 PowerShell development environment loaded!" -ForegroundColor Gr
 EOF
     
     echo "  ✅ PowerShell profile created"
+fi
+
+# Create PowerShell profile if PowerShell is available
+if command -v pwsh >/dev/null 2>&1; then
+    echo "💙 Setting up PowerShell aliases and ALZ module..."
+    
+    # Create PowerShell profile directory if it doesn't exist
+    mkdir -p ~/.config/powershell
+    
+    cat > ~/.config/powershell/Microsoft.PowerShell_profile.ps1 << 'EOF'
+# PowerShell Development Aliases
+
+# Navigation
+Set-Alias -Name ll -Value Get-ChildItem
+function la { Get-ChildItem -Force }
+function .. { Set-Location .. }
+function ... { Set-Location ../.. }
+
+# .NET aliases
+function drun { dotnet run @args }
+function dbuild { dotnet build @args }
+function dtest { dotnet test @args }
+function dclean { dotnet clean @args }
+function drestore { dotnet restore @args }
+
+# Git aliases
+function gs { git status @args }
+function ga { git add @args }
+function gc { git commit @args }
+function gp { git push @args }
+function gl { git pull @args }
+
+# Azure aliases
+function azlogin { az login @args }
+function azaccount { az account list @args }
+
+# Terraform aliases
+function tf { terraform @args }
+function tfi { terraform init @args }
+function tfp { terraform plan @args }
+function tfa { terraform apply @args }
+
+# Utility functions
+function cls { Clear-Host }
+function grep { Select-String @args }
+
+# Check if ALZ module is installed
+if (Get-InstalledModule -Name ALZ -ErrorAction SilentlyContinue) {
+    $alzVersion = (Get-InstalledModule -Name ALZ).Version
+    Write-Host "✅ ALZ Module installed - Version: $alzVersion" -ForegroundColor Green
+}
+
+Write-Host "🚀 PowerShell development environment loaded!" -ForegroundColor Green
+EOF
+    
+    echo "  ✅ PowerShell profile created"
+    
+    # Install ALZ PowerShell module
+    echo "📦 Installing ALZ PowerShell module..."
+    pwsh -c "
+        try {
+            Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+            Install-Module -Name ALZ -RequiredVersion 4.2.12 -Force -Scope CurrentUser
+            \$installedModule = Get-InstalledModule -Name ALZ -ErrorAction SilentlyContinue
+            if (\$installedModule) {
+                Write-Host \"✅ ALZ module installed - Version: \$(\$installedModule.Version)\" -ForegroundColor Green
+            } else {
+                Write-Host \"❌ Failed to install ALZ module\" -ForegroundColor Red
+            }
+        } catch {
+            Write-Host \"❌ Error installing ALZ module: \$_\" -ForegroundColor Red
+        }
+    "
 fi
 
 # Set up networking test script
@@ -421,6 +502,19 @@ echo "📍 Azure CLI: $(az --version | grep azure-cli | awk '{print $2}')"
 # Show current shell info
 echo "📍 Current shell: $SHELL"
 echo "📍 Available shells: $(cat /etc/shells | grep -E '(bash|zsh|pwsh)' | tr '\n' ' ')"
+
+# Check ALZ module
+if command -v pwsh >/dev/null 2>&1; then
+    echo "🏗️ Checking ALZ PowerShell module..."
+    pwsh -c "
+        \$alz = Get-InstalledModule -Name ALZ -ErrorAction SilentlyContinue
+        if (\$alz) {
+            Write-Host \"✅ ALZ Module: \$(\$alz.Version)\" -ForegroundColor Green
+        } else {
+            Write-Host \"❌ ALZ Module: Not installed\" -ForegroundColor Red
+        }
+    "
+fi
 
 echo ""
 echo "🎉 Development environment setup complete!"
