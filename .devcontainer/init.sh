@@ -35,12 +35,19 @@ set +a
 
 # Required variables to check
 REQUIRED_VARS=(
+    "WORKSPACE_ROOT"
+    "COMPOSE_PROJECT_NAME"
     "CONTAINER_PREFIX"
+    "GIT_USER_NAME"
+    "GIT_USER_EMAIL"
+    "GIT_DEFAULT_BRANCH"
+    "GIT_EDITOR"
+    "SQL_WAIT_INTERVAL"
     "MSSQL_SA_PASSWORD"
     "ACCEPT_EULA"
-    "SERVICEBUS_CONFIG_PATH"
-    "EVENTHUB_CONFIG_PATH"
     "AZURITE_ACCOUNT_KEY"
+    "SERVICEBUS_SHARED_ACCESS_KEY"
+    "EVENTHUB_SHARED_ACCESS_KEY"
 )
 
 # Check if all required variables are set and not empty
@@ -65,44 +72,5 @@ if [ ${#MISSING_VARS[@]} -ne 0 ]; then
     exit 1
 fi
 
-# Check password strength (basic check)
-if [ ${#MSSQL_SA_PASSWORD} -lt 8 ]; then
-    echo ""
-    echo "⚠️  WARNING: MSSQL_SA_PASSWORD should be at least 8 characters long"
-    echo "🔐 Consider using a stronger password for security"
-    echo ""
-fi
-
-# Check if config files exist
-CONFIG_FILES=(
-    "/workspaces/scriban-poc/.devcontainer/$SERVICEBUS_CONFIG_PATH"
-    "/workspaces/scriban-poc/.devcontainer/$EVENTHUB_CONFIG_PATH"
-)
-
-for config_file in "${CONFIG_FILES[@]}"; do
-    if [ ! -f "$config_file" ]; then
-        echo "⚠️  WARNING: Config file not found: $config_file"
-    else
-        echo "✅ Config file found: $(basename $config_file)"
-    fi
-done
-
 echo "✅ Environment configuration check complete!"
 echo "🚀 Proceeding with dev container startup..."
-
-# Export all variables for the current session
-export CONTAINER_PREFIX
-export MSSQL_SA_PASSWORD
-export ACCEPT_EULA
-export SERVICEBUS_CONFIG_PATH
-export EVENTHUB_CONFIG_PATH
-export AZURITE_ACCOUNT_KEY
-export SQL_WAIT_INTERVAL
-export GIT_USER_NAME
-export GIT_USER_EMAIL
-export SERVICEBUS_SHARED_ACCESS_KEY
-export EVENTHUB_SHARED_ACCESS_KEY
-export GIT_DEFAULT_BRANCH
-export GIT_EDITOR
-
-echo "📋 Environment variables loaded and exported"

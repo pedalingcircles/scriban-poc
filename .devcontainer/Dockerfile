@@ -9,7 +9,6 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
         net-tools \
         iproute2 \
         dnsutils \
-        tcpdump \
         netcat-traditional \
         nmap \
         telnet \
