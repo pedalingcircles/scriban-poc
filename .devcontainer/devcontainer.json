@@ -1,4 +1,4 @@
-{
+e{
     "name": "POC Development",
     "dockerComposeFile": "docker-compose.yml",
     "service": "dev",

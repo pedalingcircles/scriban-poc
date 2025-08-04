@@ -1,4 +1,4 @@
-version: '3.8'
+
 
 services:
   # Development container - starts last after all services are ready
@@ -14,23 +14,20 @@ services:
     networks:
       - azure-emulator-network
     depends_on:
-      azurite:
-        condition: service_healthy
-      sqlserver:
-        condition: service_healthy
-      servicebus-emulator:
-        condition: service_healthy
-      eventhub-emulator:
-        condition: service_healthy
+      - azurite
+      - sqlserver
+      - servicebus-emulator
+      - eventhub-emulator
 
-  # SQL Server - foundational service, starts first
   sqlserver:
     container_name: "${CONTAINER_PREFIX}-sqlserver"
     image: mcr.microsoft.com/mssql/server:2022-latest
     platform: linux/amd64
     environment:
-      - ACCEPT_EULA=${ACCEPT_EULA}
-      - SA_PASSWORD=${MSSQL_SA_PASSWORD}
+      ACCEPT_EULA: ${ACCEPT_EULA}
+      MSSQL_ENCRYPT: false
+      MSSQL_TLS_VERSION: "1.2"
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
     ports:
       - "1433:1433"
     volumes:
@@ -39,13 +36,13 @@ services:
       azure-emulator-network:
         aliases:
           - "sqlserver"
-    healthcheck:
-      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -Q \"SELECT 1\""]
-      interval: 10s
-      timeout: 5s
-      retries: 3
-      start_period: 30s
-    restart: unless-stopped
+    # healthcheck:
+    #   test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -C -Q \"SELECT 1\""]
+    #   interval: 15s
+    #   timeout: 10s
+    #   retries: 10
+    #   start_period: 90s
+    # restart: unless-stopped
 
   # Azurite - foundational service for Event Hub
   azurite:
@@ -79,9 +76,9 @@ services:
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
     environment:
       SQL_SERVER: "${CONTAINER_PREFIX}-sqlserver"
-      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
       ACCEPT_EULA: ${ACCEPT_EULA}
-      SQL_WAIT_INTERVAL: ${SQL_WAIT_INTERVAL:-30}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+
     ports:
       - "5672:5672"
       - "15672:15672"  # Management UI
@@ -91,7 +88,7 @@ services:
       - "./servicebus-config/config.json:/ServiceBus_Emulator/ConfigFiles/Config.json"
     depends_on:
       sqlserver:
-        condition: service_healthy
+        condition: service_started
     networks:
       azure-emulator-network:
         aliases:
@@ -112,12 +109,12 @@ services:
     volumes:
       - "./eventhub-config/config.json:/Eventhubs_Emulator/ConfigFiles/Config.json"
     environment:
-      - ACCEPT_EULA=Y
-      - BLOB_SERVER=${CONTAINER_PREFIX}-azurite
-      - METADATA_SERVER=${CONTAINER_PREFIX}-azurite
-      - BLOB_PORT=10000
-      - TABLE_PORT=10002
-      - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=${AZURITE_ACCOUNT_KEY};BlobEndpoint=http://${CONTAINER_PREFIX}-azurite:10000/devstoreaccount1;QueueEndpoint=http://${CONTAINER_PREFIX}-azurite:10001/devstoreaccount1;TableEndpoint=http://${CONTAINER_PREFIX}-azurite:10002/devstoreaccount1;
+      ACCEPT_EULA: Y
+      BLOB_SERVER: ${CONTAINER_PREFIX}-azurite
+      METADATA_SERVER: ${CONTAINER_PREFIX}-azurite
+      BLOB_PORT: 10000
+      TABLE_PORT: 10002
+      AZURE_STORAGE_CONNECTION_STRING: DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=${AZURITE_ACCOUNT_KEY};BlobEndpoint=http://${CONTAINER_PREFIX}-azurite:10000/devstoreaccount1;QueueEndpoint=http://${CONTAINER_PREFIX}-azurite:10001/devstoreaccount1;TableEndpoint=http://${CONTAINER_PREFIX}-azurite:10002/devstoreaccount1;
     ports:
       - "5673:5672"
       - "9092:9092"
