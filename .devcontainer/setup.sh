@@ -229,14 +229,6 @@ EOF
     fi
 fi
 
-
-
-
-
-
-
-
-
 # Create PowerShell profile if PowerShell is available
 if command -v pwsh >/dev/null 2>&1; then
     echo "💙 Setting up PowerShell aliases..."
