@@ -76,7 +76,8 @@ services:
       - "9092:9092"
       - "5301:5300"
     depends_on:
-      - azurite
+      azurite:
+        condition: service_healthy
     networks:
       - azure-emulator-network
 
@@ -92,6 +93,13 @@ services:
       - azurite-data:/data
     networks:
       - azure-emulator-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:10000/devstoreaccount1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
 
 volumes:
   servicebus-data:
