@@ -1,5 +1,8 @@
 #!/bin/bash
-# Setup script for development environment
+# This runs after the containers are up and configures and sets up (postCreateCommand)
+# the development environment, including restoring .NET packages, setting up git,
+# configuring shell aliases, and installing necessary tools.
+# see: https://containers.dev/implementors/json_reference/#lifecycle-scripts
 
 echo "🚀 Setting up development environment..."
 

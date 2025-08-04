@@ -96,6 +96,7 @@
             "onAutoForward": "notify"
         }
     },
+    "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/init.sh",
     "postCreateCommand": "bash .devcontainer/setup.sh",
     "remoteUser": "vscode"
 }
