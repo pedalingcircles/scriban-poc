@@ -1,7 +1,9 @@
 version: '3.8'
 
 services:
+  # Development container - starts last after all services are ready
   dev:
+    container_name: "${CONTAINER_PREFIX}-dev"
     build:
       context: .
       dockerfile: Dockerfile
@@ -12,15 +14,16 @@ services:
     networks:
       - azure-emulator-network
     depends_on:
-      servicebus-emulator:
-        condition: service_started
-      eventhub-emulator:
-        condition: service_started
       azurite:
         condition: service_healthy
       sqlserver:
         condition: service_healthy
+      servicebus-emulator:
+        condition: service_healthy
+      eventhub-emulator:
+        condition: service_healthy
 
+  # SQL Server - foundational service, starts first
   sqlserver:
     container_name: "${CONTAINER_PREFIX}-sqlserver"
     image: mcr.microsoft.com/mssql/server:2022-latest
@@ -39,12 +42,39 @@ services:
           - "sqlserver"
     healthcheck:
       test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U sa -P '${MSSQL_SA_PASSWORD}' -Q 'SELECT 1' || exit 1"]
-      interval: 30s
+      interval: 15s
       timeout: 10s
-      retries: 5
+      retries: 10
       start_period: 60s
     restart: unless-stopped
 
+  # Azurite - foundational service for Event Hub
+  azurite:
+    container_name: "${CONTAINER_PREFIX}-azurite"
+    image: mcr.microsoft.com/azure-storage/azurite:latest
+    command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --tableHost 0.0.0.0 --tablePort 10002 --loose --skipApiVersionCheck --debug /data/debug.log"
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    volumes:
+      - azurite-data:/data
+    networks:
+      azure-emulator-network:
+        aliases:
+          - "azurite"
+    healthcheck:
+      test: |
+        curl -f http://localhost:10000/devstoreaccount1?comp=properties&restype=service &&
+        curl -f http://localhost:10001/devstoreaccount1?comp=properties&restype=service &&
+        curl -f http://localhost:10002/devstoreaccount1?comp=properties&restype=service
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 30s
+    restart: unless-stopped
+
+  # Service Bus Emulator - depends on SQL Server
   servicebus-emulator:
     container_name: "${CONTAINER_PREFIX}-servicebus"
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
@@ -52,9 +82,10 @@ services:
       SQL_SERVER: "${CONTAINER_PREFIX}-sqlserver"
       MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD}"
       ACCEPT_EULA: ${ACCEPT_EULA}
-      SQL_WAIT_INTERVAL: ${SQL_WAIT_INTERVAL}
+      SQL_WAIT_INTERVAL: ${SQL_WAIT_INTERVAL:-30}
     ports:
       - "5672:5672"
+      - "15672:15672"  # Management UI
       - "5300:5300"
     volumes:
       - servicebus-data:/tmp/servicebus
@@ -66,8 +97,15 @@ services:
       azure-emulator-network:
         aliases:
           - "servicebus-emulator"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5300/api/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 90s
     restart: unless-stopped
 
+  # Event Hub Emulator - depends on Azurite
   eventhub-emulator:
     container_name: "${CONTAINER_PREFIX}-eventhub"
     image: mcr.microsoft.com/azure-messaging/eventhubs-emulator:latest
@@ -78,30 +116,28 @@ services:
       - ACCEPT_EULA=Y
       - BLOB_SERVER=${CONTAINER_PREFIX}-azurite
       - METADATA_SERVER=${CONTAINER_PREFIX}-azurite
+      - BLOB_PORT=10000
+      - TABLE_PORT=10002
       - AZURE_STORAGE_CONNECTION_STRING=DefaultEndpointsProtocol=http;AccountName=devstoreaccount1;AccountKey=${AZURITE_ACCOUNT_KEY};BlobEndpoint=http://${CONTAINER_PREFIX}-azurite:10000/devstoreaccount1;QueueEndpoint=http://${CONTAINER_PREFIX}-azurite:10001/devstoreaccount1;TableEndpoint=http://${CONTAINER_PREFIX}-azurite:10002/devstoreaccount1;
     ports:
       - "5673:5672"
       - "9092:9092"
+      - "9093:9093"
       - "5301:5300"
     depends_on:
       azurite:
         condition: service_healthy
     networks:
-      - azure-emulator-network
+      azure-emulator-network:
+        aliases:
+          - "eventhub-emulator"
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:5300/api/health || exit 1"]
+      interval: 15s
+      timeout: 10s
+      retries: 8
+      start_period: 120s
     restart: unless-stopped
-
-  azurite:
-    container_name: "${CONTAINER_PREFIX}-azurite"
-    image: mcr.microsoft.com/azure-storage/azurite:latest
-    command: "azurite --blobHost 0.0.0.0 --blobPort 10000 --queueHost 0.0.0.0 --queuePort 10001 --tableHost 0.0.0.0 --tablePort 10002 --loose --skipApiVersionCheck"
-    ports:
-      - "10000:10000"
-      - "10001:10001"
-      - "10002:10002"
-    volumes:
-      - azurite-data:/data
-    networks:
-      - azure-emulator-network
 
 volumes:
   servicebus-data:
@@ -110,3 +146,4 @@ volumes:
 
 networks:
   azure-emulator-network:
+    driver: bridge
