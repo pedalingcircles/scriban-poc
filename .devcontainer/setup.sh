@@ -9,12 +9,6 @@ echo "🚀 Setting up development environment..."
 # Update package lists
 sudo apt-get update
 
-# Load environment variables from .env file if it exists
-if [ -f .devcontainer/.env ]; then
-    echo "📝 Loading environment variables from .env file..."
-    export $(grep -v '^#' .devcontainer/.env | xargs)
-fi
-
 # Verify dotnet installation and restore solution
 echo "📦 Restoring .NET packages..."
 dotnet restore
