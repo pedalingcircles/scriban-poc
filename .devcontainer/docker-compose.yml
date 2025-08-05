@@ -1,7 +1,6 @@
 
 
 services:
-  # Development container - starts last after all services are ready
   dev:
     container_name: "${CONTAINER_PREFIX}-dev"
     build:
@@ -22,12 +21,12 @@ services:
   sqlserver:
     container_name: "${CONTAINER_PREFIX}-sqlserver"
     image: mcr.microsoft.com/mssql/server:2022-latest
+    pull_policy: missing
     platform: linux/amd64
     environment:
       ACCEPT_EULA: ${ACCEPT_EULA}
-      MSSQL_ENCRYPT: false
-      MSSQL_TLS_VERSION: "1.2"
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
+      MSSQL_ENABLE_HADR: 1
     ports:
       - "1433:1433"
     volumes:
@@ -36,15 +35,7 @@ services:
       azure-emulator-network:
         aliases:
           - "sqlserver"
-    # healthcheck:
-    #   test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P ${MSSQL_SA_PASSWORD} -C -Q \"SELECT 1\""]
-    #   interval: 15s
-    #   timeout: 10s
-    #   retries: 10
-    #   start_period: 90s
-    # restart: unless-stopped
 
-  # Azurite - foundational service for Event Hub
   azurite:
     container_name: "${CONTAINER_PREFIX}-azurite"
     image: mcr.microsoft.com/azure-storage/azurite:latest
@@ -74,11 +65,11 @@ services:
   servicebus-emulator:
     container_name: "${CONTAINER_PREFIX}-servicebus"
     image: mcr.microsoft.com/azure-messaging/servicebus-emulator:latest
+    pull_policy: missing
     environment:
       SQL_SERVER: "${CONTAINER_PREFIX}-sqlserver"
       ACCEPT_EULA: ${ACCEPT_EULA}
       MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD}
-
     ports:
       - "5672:5672"
       - "15672:15672"  # Management UI
