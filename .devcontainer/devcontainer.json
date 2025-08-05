@@ -77,25 +77,7 @@
             ]
         }
     },
-    "forwardPorts": [5000, 5001, 8080, 5672, 15672, 5671, 9093],
-    "portsAttributes": {
-        "5672": {
-            "label": "Service Bus Emulator - AMQP",
-            "onAutoForward": "notify"
-        },
-        "15672": {
-            "label": "Service Bus Emulator - Management UI",
-            "onAutoForward": "openBrowser"
-        },
-        "5671": {
-            "label": "Service Bus Emulator - AMQP SSL",
-            "onAutoForward": "notify"
-        },
-        "9093": {
-            "label": "Event Hub Emulator - Kafka",
-            "onAutoForward": "notify"
-        }
-    },
+    "forwardPorts": [8080],
     "initializeCommand": "bash ${localWorkspaceFolder}/.devcontainer/init.sh",
     "postCreateCommand": "bash .devcontainer/setup.sh",
     "remoteUser": "vscode"
