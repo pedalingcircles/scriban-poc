@@ -9,7 +9,6 @@ ENV_FILE=".devcontainer/.env"
 ENV_EXAMPLE=".devcontainer/.env.example"
 
 echo "🔍 Checking environment configuration..."
-
 # Check if .env file exists
 if [ ! -f "$ENV_FILE" ]; then
     echo ""
@@ -32,5 +31,4 @@ echo "🔄 Loading environment variables..."
 set -a
 source "$ENV_FILE"
 set +a
-
 echo "📋 Environment variables loaded and exported"
