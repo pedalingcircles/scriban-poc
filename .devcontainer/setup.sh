@@ -133,10 +133,10 @@ alias mv='mv -i'
 
 # Quick navigation to common directories
 alias cdw='cd /workspaces'
-alias cdc='cd /workspaces/scriban-poc'
-alias cdi='cd /workspaces/scriban-poc/infra'
-alias cds='cd /workspaces/scriban-poc/src'
-alias cdt='cd /workspaces/scriban-poc/tests'
+alias cdc='cd /workspaces/${COMPOSE_PROJECT_NAME}'
+alias cdi='cd /workspaces/${COMPOSE_PROJECT_NAME}/infra'
+alias cds='cd /workspaces/${COMPOSE_PROJECT_NAME}/src'
+alias cdt='cd /workspaces/${COMPOSE_PROJECT_NAME}/tests'
 
 EOF
 }
